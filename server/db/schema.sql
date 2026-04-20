@@ -40,5 +40,13 @@ CREATE TABLE IF NOT EXISTS reactions (
   UNIQUE(user_id, target_type, target_id)
 );
 
+CREATE TABLE IF NOT EXISTS space_members (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  space_id INTEGER NOT NULL REFERENCES spaces(id) ON DELETE CASCADE,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  joined_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(space_id, user_id)
+);
+
 -- Seed demo user
 INSERT OR IGNORE INTO users (id, username) VALUES (1, 'demo_user');

@@ -12,6 +12,8 @@ export default function SpacePage() {
   const [content, setContent] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [joining, setJoining] = useState(false)
+  const [joinError, setJoinError] = useState('')
 
   useEffect(() => {
     setLoading(true)
@@ -24,6 +26,27 @@ export default function SpacePage() {
       setLoading(false)
     })
   }, [spaceId, sort])
+
+  async function toggleJoin() {
+    setJoining(true)
+    setJoinError('')
+    try {
+      const action = space.is_member ? 'leave' : 'join'
+      const url = `/api/spaces/${spaceId}/${action}`
+      console.log('Fetching:', url)
+      const res = await fetch(url, { method: 'POST' })
+      console.log('Response status:', res.status)
+      if (!res.ok) throw new Error(`Server error ${res.status}`)
+      const data = await res.json()
+      console.log('Response data:', data)
+      setSpace(s => ({ ...s, is_member: data.is_member, member_count: data.member_count }))
+    } catch (err) {
+      console.error('Join/leave failed:', err)
+      setJoinError(err.message)
+    } finally {
+      setJoining(false)
+    }
+  }
 
   async function submitPost(e) {
     e.preventDefault()
@@ -69,24 +92,48 @@ export default function SpacePage() {
         }}>
           {space.name[0].toUpperCase()}
         </div>
-        <div>
+        <div style={{ flex: 1, minWidth: 0 }}>
           <div className="space-banner-title" style={{ fontWeight: '700', fontSize: '13px', color: '#e4e4e7', fontFamily: 'Unbounded, sans-serif' }}>{space.name}</div>
           {space.description && (
             <div style={{ fontSize: '12px', color: '#71717a' }}>{space.description}</div>
           )}
+          <div className="mono" style={{ fontSize: '11px', color: '#52525b', marginTop: '2px' }}>
+            {space.member_count ?? 0} member{space.member_count !== 1 ? 's' : ''}
+          </div>
         </div>
-        <button
-          onClick={() => setShowCreate(s => !s)}
-          style={{
-            marginLeft: 'auto', padding: '5px 12px', fontSize: '12px', fontWeight: '700',
-            background: '#4B9CD3', color: '#0e0e12', border: 'none', cursor: 'pointer',
-            fontFamily: 'IBM Plex Mono, monospace',
-          }}
-          onMouseEnter={e => e.currentTarget.style.background = '#3a8bc2'}
-          onMouseLeave={e => e.currentTarget.style.background = '#4B9CD3'}
-        >
-          + new post
-        </button>
+        <div style={{ display: 'flex', gap: '6px', marginLeft: 'auto', flexShrink: 0 }}>
+          <button
+            onClick={toggleJoin}
+            disabled={joining}
+            style={{
+              padding: '5px 12px', fontSize: '12px', fontWeight: '700', cursor: 'pointer',
+              background: space.is_member ? 'transparent' : '#4B9CD3',
+              color: space.is_member ? '#a1a1aa' : '#0e0e12',
+              border: space.is_member ? '1px solid #2a2a38' : 'none',
+              fontFamily: 'IBM Plex Mono, monospace',
+              opacity: joining ? 0.6 : 1,
+            }}
+          >
+            {joining ? '...' : space.is_member ? 'joined' : 'join'}
+          </button>
+          {joinError && (
+            <span className="mono" style={{ fontSize: '10px', color: '#e05252', alignSelf: 'center' }}>
+              {joinError}
+            </span>
+          )}
+          <button
+            onClick={() => setShowCreate(s => !s)}
+            style={{
+              padding: '5px 12px', fontSize: '12px', fontWeight: '700',
+              background: '#4B9CD3', color: '#0e0e12', border: 'none', cursor: 'pointer',
+              fontFamily: 'IBM Plex Mono, monospace',
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = '#3a8bc2'}
+            onMouseLeave={e => e.currentTarget.style.background = '#4B9CD3'}
+          >
+            + new post
+          </button>
+        </div>
       </div>
 
       {/* Create post form */}

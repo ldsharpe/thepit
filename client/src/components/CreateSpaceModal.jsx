@@ -25,6 +25,7 @@ export default function CreateSpaceModal({ onClose }) {
         setError(data.error || 'Failed to create space')
         return
       }
+      window.dispatchEvent(new Event('space-created'))
       onClose()
     } finally {
       setLoading(false)

@@ -5,11 +5,11 @@ const router = express.Router();
 router.get('/', (req, res) => {
   const spaces = db.prepare(`
     SELECT s.*, u.username as creator,
-      COUNT(DISTINCT p.id) as post_count
+      (SELECT COUNT(*) FROM posts WHERE space_id = s.id) as post_count,
+      (SELECT COUNT(*) FROM space_members WHERE space_id = s.id) as member_count,
+      (SELECT COUNT(*) FROM space_members WHERE space_id = s.id AND user_id = 1) as is_member
     FROM spaces s
     LEFT JOIN users u ON s.created_by = u.id
-    LEFT JOIN posts p ON p.space_id = s.id
-    GROUP BY s.id
     ORDER BY s.created_at DESC
   `).all();
   res.json(spaces);
@@ -31,8 +31,16 @@ router.post('/', (req, res) => {
   }
 });
 
+
 router.get('/:id', (req, res) => {
-  const space = db.prepare('SELECT * FROM spaces WHERE id = ?').get(req.params.id);
+  const space = db.prepare(`
+    SELECT s.*,
+      (SELECT COUNT(*) FROM posts WHERE space_id = s.id) as post_count,
+      (SELECT COUNT(*) FROM space_members WHERE space_id = s.id) as member_count,
+      (SELECT COUNT(*) FROM space_members WHERE space_id = s.id AND user_id = 1) as is_member
+    FROM spaces s
+    WHERE s.id = ?
+  `).get(req.params.id);
   if (!space) return res.status(404).json({ error: 'Space not found' });
   res.json(space);
 });

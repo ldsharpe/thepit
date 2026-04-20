@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Layout from './components/Layout'
 import Home from './pages/Home'
 import Popular from './pages/Popular'
+import Explore from './pages/Explore'
 import SpacePage from './pages/SpacePage'
 import PostPage from './pages/PostPage'
 
@@ -12,6 +13,7 @@ export default function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="popular" element={<Popular />} />
+          <Route path="explore" element={<Explore />} />
           <Route path="s/:spaceId" element={<SpacePage />} />
           <Route path="s/:spaceId/post/:postId" element={<PostPage />} />
         </Route>

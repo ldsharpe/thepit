@@ -5,7 +5,7 @@ import CreateSpaceModal from './CreateSpaceModal'
 const NAV = [
   { label: 'Home',           to: '/' },
   { label: 'Popular',        to: '/popular' },
-  { label: 'Explore Spaces', to: '/explore', disabled: true },
+  { label: 'Explore Spaces', to: '/explore' },
 ]
 
 export default function Sidebar() {
@@ -30,31 +30,27 @@ export default function Sidebar() {
             }}>
               Navigate
             </div>
-            {NAV.map(({ label, to, disabled }) => {
+            {NAV.map(({ label, to }) => {
               const active = pathname === to
               return (
                 <Link
                   key={label}
-                  to={disabled ? '#' : to}
-                  onClick={disabled ? e => e.preventDefault() : undefined}
+                  to={to}
                   className="no-underline"
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'space-between',
                     padding: '7px 10px',
                     fontSize: '13px',
                     borderBottom: '1px solid #2a2a38',
                     background: active ? '#1c1c26' : 'transparent',
-                    color: disabled ? '#3f3f52' : active ? '#4B9CD3' : '#a1a1aa',
-                    cursor: disabled ? 'default' : 'pointer',
+                    color: active ? '#4B9CD3' : '#a1a1aa',
                   }}
-                  onMouseEnter={e => { if (!active && !disabled) e.currentTarget.style.background = '#1c1c26' }}
-                  onMouseLeave={e => { if (!active && !disabled) e.currentTarget.style.background = 'transparent' }}
+                  onMouseEnter={e => { if (!active) e.currentTarget.style.background = '#1c1c26' }}
+                  onMouseLeave={e => { if (!active) e.currentTarget.style.background = 'transparent' }}
                 >
                   {active && <span style={{ color: '#4B9CD3', marginRight: '6px' }}>»</span>}
                   {label}
-                  {disabled && <span className="mono" style={{ fontSize: '9px', color: '#3f3f52' }}>soon</span>}
                 </Link>
               )
             })}
