@@ -88,7 +88,7 @@ export default function CreateSpaceModal({ onClose }) {
               {displayIcon}
             </div>
             <div style={{ flex: 1 }}>
-              <label className="mono" style={{ display: 'block', fontSize: '11px', color: '#71717a', marginBottom: '4px' }}>
+              <label className="mono" style={{ display: 'block', fontSize: '11px', color: '#9a9aaa', marginBottom: '4px' }}>
                 NAME *
               </label>
               <input
@@ -109,7 +109,7 @@ export default function CreateSpaceModal({ onClose }) {
           {/* Icon + Category row */}
           <div style={{ display: 'flex', gap: '10px' }}>
             <div style={{ width: '80px' }}>
-              <label className="mono" style={{ display: 'block', fontSize: '11px', color: '#71717a', marginBottom: '4px' }}>
+              <label className="mono" style={{ display: 'block', fontSize: '11px', color: '#9a9aaa', marginBottom: '4px' }}>
                 ICON
               </label>
               <input
@@ -126,7 +126,7 @@ export default function CreateSpaceModal({ onClose }) {
               />
             </div>
             <div style={{ flex: 1 }}>
-              <label className="mono" style={{ display: 'block', fontSize: '11px', color: '#71717a', marginBottom: '4px' }}>
+              <label className="mono" style={{ display: 'block', fontSize: '11px', color: '#9a9aaa', marginBottom: '4px' }}>
                 CATEGORY
               </label>
               <select
@@ -146,7 +146,7 @@ export default function CreateSpaceModal({ onClose }) {
 
           {/* Description */}
           <div>
-            <label className="mono" style={{ display: 'block', fontSize: '11px', color: '#71717a', marginBottom: '4px' }}>
+            <label className="mono" style={{ display: 'block', fontSize: '11px', color: '#9a9aaa', marginBottom: '4px' }}>
               DESCRIPTION
             </label>
             <textarea
@@ -165,8 +165,8 @@ export default function CreateSpaceModal({ onClose }) {
 
           {/* Rules */}
           <div>
-            <label className="mono" style={{ display: 'block', fontSize: '11px', color: '#71717a', marginBottom: '4px' }}>
-              RULES <span style={{ color: '#3f3f52' }}>(optional)</span>
+            <label className="mono" style={{ display: 'block', fontSize: '11px', color: '#9a9aaa', marginBottom: '4px' }}>
+              RULES <span style={{ color: '#52525b' }}>(optional)</span>
             </label>
             <textarea
               value={rules}
@@ -184,7 +184,7 @@ export default function CreateSpaceModal({ onClose }) {
 
           {/* Color picker */}
           <div>
-            <label className="mono" style={{ display: 'block', fontSize: '11px', color: '#71717a', marginBottom: '6px' }}>
+            <label className="mono" style={{ display: 'block', fontSize: '11px', color: '#9a9aaa', marginBottom: '6px' }}>
               ACCENT COLOR
             </label>
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
@@ -211,7 +211,7 @@ export default function CreateSpaceModal({ onClose }) {
               onClick={onClose}
               style={{
                 padding: '5px 12px', background: 'none',
-                border: '1px solid #2a2a38', color: '#71717a',
+                border: '1px solid #2a2a38', color: '#9a9aaa',
                 cursor: 'pointer', fontSize: '12px', fontFamily: 'inherit',
               }}
             >

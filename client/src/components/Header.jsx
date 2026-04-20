@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 export default function Header({ inSpace }) {
+  const { user, logout } = useAuth()
   const [query, setQuery] = useState('')
   const [results, setResults] = useState([])
   const [focused, setFocused] = useState(false)
@@ -22,6 +24,11 @@ export default function Header({ inSpace }) {
     navigate(`/s/${space.id}`)
   }
 
+  async function handleLogout() {
+    await logout()
+    navigate('/')
+  }
+
   return (
     <header style={{ background: '#11111a', borderBottom: '2px solid #2a2a38' }}>
       <div
@@ -34,7 +41,7 @@ export default function Header({ inSpace }) {
           </span>
         </Link>
 
-        {/* Search — takes all remaining space */}
+        {/* Search */}
         <div style={{ position: 'relative', flex: 1 }}>
           <input
             value={query}
@@ -67,7 +74,7 @@ export default function Header({ inSpace }) {
                   onMouseEnter={e => e.currentTarget.style.background = '#1c1c26'}
                   onMouseLeave={e => e.currentTarget.style.background = 'none'}
                 >
-                  <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: s.banner_color || '#4B9CD3', flexShrink: 0, display: 'inline-block' }} />
+                  <span style={{ width: '8px', height: '8px', background: s.banner_color || '#4B9CD3', flexShrink: 0, display: 'inline-block' }} />
                   {s.name}
                 </button>
               ))}
@@ -80,14 +87,43 @@ export default function Header({ inSpace }) {
             <Link
               to="/"
               className="mono no-underline"
-              style={{ fontSize: '11px', padding: '3px 8px', border: '1px solid #2a2a38', color: '#71717a' }}
+              style={{ fontSize: '11px', padding: '3px 8px', border: '1px solid #2a2a38', color: '#9a9aaa' }}
             >
               &laquo; home
             </Link>
           )}
-          <span className="mono header-username" style={{ fontSize: '11px', color: '#3f3f52' }}>
-            logged in as <span style={{ color: '#4B9CD3' }}>demo_user</span>
-          </span>
+
+          {user ? (
+            <>
+              <span className="mono header-username" style={{ fontSize: '11px', color: '#8a8a9a' }}>
+                logged in as <span style={{ color: '#4B9CD3' }}>{user.username}</span>
+              </span>
+              <button
+                onClick={handleLogout}
+                className="mono"
+                style={{
+                  fontSize: '11px', padding: '3px 8px',
+                  background: 'none', border: '1px solid #2a2a38',
+                  color: '#8a8a9a', cursor: 'pointer',
+                }}
+                onMouseEnter={e => e.currentTarget.style.color = '#a1a1aa'}
+                onMouseLeave={e => e.currentTarget.style.color = '#8a8a9a'}
+              >
+                log out
+              </button>
+            </>
+          ) : (
+            <Link
+              to="/login"
+              className="mono no-underline"
+              style={{
+                fontSize: '11px', padding: '3px 10px',
+                background: '#4B9CD3', color: '#0e0e12', fontWeight: '700',
+              }}
+            >
+              log in
+            </Link>
+          )}
         </div>
       </div>
     </header>

@@ -51,7 +51,7 @@ export default function Explore() {
               style={{
                 padding: '2px 8px', fontSize: '11px', cursor: 'pointer',
                 background: sort === s ? '#4B9CD3' : 'transparent',
-                color: sort === s ? '#0e0e12' : '#71717a',
+                color: sort === s ? '#0e0e12' : '#9a9aaa',
                 border: sort === s ? '1px solid #4B9CD3' : '1px solid #2a2a38',
                 fontWeight: sort === s ? '700' : '400',
               }}
@@ -75,7 +75,7 @@ export default function Explore() {
             style={{
               padding: '2px 8px', fontSize: '10px', cursor: 'pointer',
               background: category === c ? '#2a2a38' : 'transparent',
-              color: category === c ? '#e4e4e7' : '#52525b',
+              color: category === c ? '#e4e4e7' : '#8a8a9a',
               border: category === c ? '1px solid #4B9CD3' : '1px solid #2a2a38',
             }}
           >
@@ -86,11 +86,11 @@ export default function Explore() {
 
       <div style={{ border: '1px solid #2a2a38' }}>
         {loading ? (
-          <div style={{ padding: '24px', textAlign: 'center', color: '#52525b', fontSize: '13px' }}>
+          <div style={{ padding: '24px', textAlign: 'center', color: '#8a8a9a', fontSize: '13px' }}>
             Loading...
           </div>
         ) : sorted.length === 0 ? (
-          <div style={{ padding: '32px', textAlign: 'center', color: '#52525b', fontSize: '13px' }}>
+          <div style={{ padding: '32px', textAlign: 'center', color: '#8a8a9a', fontSize: '13px' }}>
             {category !== 'All' ? `No ${category} spaces yet.` : 'No spaces yet. Be the first to create one!'}
           </div>
         ) : (
@@ -148,7 +148,7 @@ function SpaceCard({ space, onJoinChange }) {
           }}>
             {space.name}
           </div>
-          <div className="mono" style={{ fontSize: '10px', color: '#52525b', marginTop: '2px' }}>
+          <div className="mono" style={{ fontSize: '10px', color: '#8a8a9a', marginTop: '2px' }}>
             {space.member_count ?? 0} member{space.member_count !== 1 ? 's' : ''} · {space.post_count ?? 0} post{space.post_count !== 1 ? 's' : ''}
           </div>
         </div>
@@ -160,7 +160,7 @@ function SpaceCard({ space, onJoinChange }) {
             flexShrink: 0,
             padding: '3px 8px', fontSize: '10px', fontWeight: '700', cursor: 'pointer',
             background: space.is_member ? 'transparent' : '#4B9CD3',
-            color: space.is_member ? '#52525b' : '#0e0e12',
+            color: space.is_member ? '#8a8a9a' : '#0e0e12',
             border: space.is_member ? '1px solid #2a2a38' : 'none',
             opacity: joining ? 0.5 : 1,
           }}
@@ -172,7 +172,7 @@ function SpaceCard({ space, onJoinChange }) {
       {/* Category tag */}
       {space.category && space.category !== 'General' && (
         <div className="mono" style={{
-          display: 'inline-block', fontSize: '9px', color: '#52525b',
+          display: 'inline-block', fontSize: '9px', color: '#8a8a9a',
           border: '1px solid #2a2a38', padding: '1px 5px', marginBottom: '8px',
           letterSpacing: '0.5px',
         }}>
@@ -182,11 +182,11 @@ function SpaceCard({ space, onJoinChange }) {
 
       {/* Description */}
       <p style={{
-        fontSize: '12px', color: '#71717a', lineHeight: '1.5', margin: 0,
+        fontSize: '12px', color: '#9a9aaa', lineHeight: '1.5', margin: 0,
         display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical',
         overflow: 'hidden', minHeight: '18px',
       }}>
-        {space.description || <span style={{ color: '#3f3f52', fontStyle: 'italic' }}>No description.</span>}
+        {space.description || <span style={{ color: '#52525b', fontStyle: 'italic' }}>No description.</span>}
       </p>
 
       <div style={{ height: '2px', background: space.banner_color || '#4B9CD3', marginTop: '12px', opacity: 0.4 }} />

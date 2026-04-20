@@ -1,18 +1,24 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 export default function ReactionBar({ likes, dislikes, targetType, targetId, onReaction, userReaction, vertical }) {
+  const { user } = useAuth()
+  const navigate = useNavigate()
   const [localLikes, setLocalLikes] = useState(Number(likes))
   const [localDislikes, setLocalDislikes] = useState(Number(dislikes))
   const [myReaction, setMyReaction] = useState(userReaction ?? null)
   const [loading, setLoading] = useState(false)
 
   async function react(value) {
+    if (!user) { navigate('/login'); return }
     if (loading) return
     setLoading(true)
     try {
       const res = await fetch('/api/reactions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ target_type: targetType, target_id: targetId, value }),
       })
       const data = await res.json()
@@ -46,7 +52,7 @@ export default function ReactionBar({ likes, dislikes, targetType, targetId, onR
           className="mono"
           style={{
             fontSize: '12px', fontWeight: '700', lineHeight: 1,
-            color: netScore > 0 ? '#4B9CD3' : netScore < 0 ? '#e05252' : '#71717a',
+            color: netScore > 0 ? '#4B9CD3' : netScore < 0 ? '#e05252' : '#9a9aaa',
           }}
         >
           {netScore}

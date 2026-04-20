@@ -5,6 +5,8 @@ import Popular from './pages/Popular'
 import Explore from './pages/Explore'
 import SpacePage from './pages/SpacePage'
 import PostPage from './pages/PostPage'
+import Login from './pages/Login'
+import Register from './pages/Register'
 
 export default function App() {
   return (
@@ -16,6 +18,8 @@ export default function App() {
           <Route path="explore" element={<Explore />} />
           <Route path="s/:spaceId" element={<SpacePage />} />
           <Route path="s/:spaceId/post/:postId" element={<PostPage />} />
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
         </Route>
       </Routes>
     </BrowserRouter>

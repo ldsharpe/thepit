@@ -38,7 +38,7 @@ cd client && npm run dev
 - "Home" back button in header when inside a space
 - Mobile responsive layout (sidebar hidden, bottom nav shown)
 - Deployed to Railway with production build config
-- No auth — all actions attributed to demo_user (id: 1)
+- Auth system: username/password, server-side sessions, bcryptjs, rate limiting on login/register
 
 ---
 
@@ -60,19 +60,21 @@ cd client && npm run dev
 - Auth is the likely next big feature (users sharing demo_user is limiting).
 
 ### Planned / Possible Next Steps
-- Real auth system (explicitly deferred — do NOT implement unless asked)
 - User profiles
 - Image uploads in posts
 - Search for posts (currently only searches spaces)
+- Persistent session store (low priority)
 
 ---
 
 ## Key Decisions & Constraints
 
-- **No authentication** until explicitly requested by user
+- **Auth** implemented: username/password, express-session (memory store), bcryptjs, rate limiting
 - **SQLite** is fine — user expects ~20 users max
 - **No emojis** anywhere in the UI (user explicitly requested)
 - **No rounded corners** — boxy/structured forum-era design language
+- **No link underlines on hover** — links highlight via color only
+- **Muted text colors**: `#8a8a9a` (secondary), `#9a9aaa` (tertiary) — bumped for readability
 - Font pairing: **Unbounded** (headers/branding) + **Inter** (body text) + **IBM Plex Mono** (labels, metadata, scores)
 - Post cards: clicking anywhere navigates to post; score column stops propagation
 - Comments: collapsible with ▼/▶ toggle; replies hidden count shown when collapsed
@@ -89,5 +91,5 @@ cd client && npm run dev
 ## Known Issues / Tech Debt
 
 - Reaction counts were inflated due to cartesian product JOIN bug (fixed — now uses subqueries)
-- All reactions share demo_user (id: 1) — will be resolved when auth is added
-- SQLite DB persists on Railway between deploys (no volume mount) — old bad reaction data may still exist until auth + fresh DB
+- Session store is in-memory — sessions reset on server restart (acceptable for ~20 users)
+- SQLite DB persists on Railway between deploys (no volume mount)

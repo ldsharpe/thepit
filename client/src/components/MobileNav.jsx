@@ -30,8 +30,8 @@ export default function MobileNav() {
             className="no-underline"
             style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: 1 }}
           >
-            <span style={{ fontSize: '18px', lineHeight: 1, color: pathname === to ? '#4B9CD3' : '#52525b' }}>{icon}</span>
-            <span className="mono" style={{ fontSize: '9px', color: pathname === to ? '#4B9CD3' : '#52525b' }}>{label}</span>
+            <span style={{ fontSize: '18px', lineHeight: 1, color: pathname === to ? '#4B9CD3' : '#8a8a9a' }}>{icon}</span>
+            <span className="mono" style={{ fontSize: '9px', color: pathname === to ? '#4B9CD3' : '#8a8a9a' }}>{label}</span>
           </Link>
         ))}
 

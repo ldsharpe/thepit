@@ -49,7 +49,7 @@ export default function Home() {
               style={{
                 padding: '2px 8px', fontSize: '11px', cursor: 'pointer',
                 background: sort === s ? '#4B9CD3' : 'transparent',
-                color: sort === s ? '#0e0e12' : '#71717a',
+                color: sort === s ? '#0e0e12' : '#9a9aaa',
                 border: sort === s ? '1px solid #4B9CD3' : '1px solid #2a2a38',
                 fontWeight: sort === s ? '700' : '400',
               }}
@@ -63,12 +63,12 @@ export default function Home() {
       {/* Post list */}
       <div style={{ border: '1px solid #2a2a38' }}>
         {loading ? (
-          <div style={{ padding: '24px', textAlign: 'center', color: '#52525b', fontSize: '13px' }}>
+          <div style={{ padding: '24px', textAlign: 'center', color: '#8a8a9a', fontSize: '13px' }}>
             Loading...
           </div>
         ) : posts.length === 0 ? (
-          <div style={{ padding: '32px', textAlign: 'center', color: '#52525b' }}>
-            <div style={{ fontSize: '13px', marginBottom: '6px', color: '#71717a' }}>No posts yet.</div>
+          <div style={{ padding: '32px', textAlign: 'center', color: '#8a8a9a' }}>
+            <div style={{ fontSize: '13px', marginBottom: '6px', color: '#9a9aaa' }}>No posts yet.</div>
             <div style={{ fontSize: '12px' }}>Create a space and post something to get started.</div>
           </div>
         ) : (

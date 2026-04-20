@@ -49,14 +49,14 @@ export default function PostCard({ post, spaceId, spaceName, spaceColor, onReact
             >
               {spaceName}
             </Link>
-            <span style={{ color: '#3f3f52', fontSize: '11px' }}>·</span>
-            <span style={{ fontSize: '11px', color: '#52525b' }}>
+            <span style={{ color: '#52525b', fontSize: '11px' }}>·</span>
+            <span style={{ fontSize: '11px', color: '#8a8a9a' }}>
               {post.username} · {timeAgo(post.created_at)}
             </span>
           </div>
         )}
         {!spaceName && (
-          <div style={{ fontSize: '11px', color: '#52525b', marginBottom: '3px' }}>
+          <div style={{ fontSize: '11px', color: '#8a8a9a', marginBottom: '3px' }}>
             {post.username} · {timeAgo(post.created_at)}
           </div>
         )}
@@ -66,12 +66,12 @@ export default function PostCard({ post, spaceId, spaceName, spaceColor, onReact
         </div>
 
         {post.content && (
-          <div style={{ fontSize: '13px', color: '#71717a', marginBottom: '5px', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+          <div style={{ fontSize: '13px', color: '#9a9aaa', marginBottom: '5px', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
             {post.content}
           </div>
         )}
 
-        <span className="mono" style={{ fontSize: '11px', color: '#52525b' }}>
+        <span className="mono" style={{ fontSize: '11px', color: '#8a8a9a' }}>
           {post.comment_count ?? 0} comment{post.comment_count !== 1 ? 's' : ''}
         </span>
       </div>

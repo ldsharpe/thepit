@@ -1,13 +1,17 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import ReactionBar from './ReactionBar'
+import { useAuth } from '../context/AuthContext'
 
 function netScore(c) { return Number(c.likes ?? 0) - Number(c.dislikes ?? 0) }
 function sortByScore(arr) { return [...arr].sort((a, b) => netScore(b) - netScore(a)) }
 
+const MAX_INDENT = 5
+
 export default function CommentThread({ comments, allComments, postId, depth = 0, onNewComment }) {
   const all = allComments ?? comments
   return (
-    <div style={depth > 0 ? { marginLeft: '12px' } : {}}>
+    <div className={depth > 0 && depth <= MAX_INDENT ? 'comment-indent' : ''}>
       {sortByScore(comments).map(c => (
         <Comment key={c.id} comment={c} allComments={all} postId={postId} depth={depth} onNewComment={onNewComment} />
       ))}
@@ -16,11 +20,31 @@ export default function CommentThread({ comments, allComments, postId, depth = 0
 }
 
 function Comment({ comment, allComments, postId, depth, onNewComment }) {
+  const { user } = useAuth()
+  const navigate = useNavigate()
+  const { spaceId } = useParams()
   const [replying, setReplying] = useState(false)
   const [replyText, setReplyText] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [collapsed, setCollapsed] = useState(false)
   const [lineHover, setLineHover] = useState(false)
+  const headerRef = useRef(null)
+
+  function toggleCollapsed() {
+    if (!collapsed && headerRef.current) {
+      const y = headerRef.current.getBoundingClientRect().top
+      setCollapsed(true)
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (headerRef.current) {
+            window.scrollBy(0, headerRef.current.getBoundingClientRect().top - y)
+          }
+        })
+      })
+    } else {
+      setCollapsed(c => !c)
+    }
+  }
 
   const children = sortByScore(allComments.filter(c => c.parent_comment_id === comment.id))
 
@@ -32,6 +56,7 @@ function Comment({ comment, allComments, postId, depth, onNewComment }) {
       const res = await fetch('/api/comments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ post_id: postId, content: replyText.trim(), parent_comment_id: comment.id }),
       })
       const newComment = await res.json()
@@ -49,17 +74,19 @@ function Comment({ comment, allComments, postId, depth, onNewComment }) {
 
         {/* Left gutter: reaction bar + clickable collapse line */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, width: '24px' }}>
-          <ReactionBar
-            likes={comment.likes}
-            dislikes={comment.dislikes}
-            targetType="comment"
-            targetId={comment.id}
-            userReaction={comment.userReaction}
-            vertical
-          />
+          {!collapsed && (
+            <ReactionBar
+              likes={comment.likes}
+              dislikes={comment.dislikes}
+              targetType="comment"
+              targetId={comment.id}
+              userReaction={comment.userReaction}
+              vertical
+            />
+          )}
           {children.length > 0 && (
             <div
-              onClick={() => setCollapsed(c => !c)}
+              onClick={toggleCollapsed}
               onMouseEnter={() => setLineHover(true)}
               onMouseLeave={() => setLineHover(false)}
               title={collapsed ? 'Expand' : 'Collapse'}
@@ -79,13 +106,14 @@ function Comment({ comment, allComments, postId, depth, onNewComment }) {
         {/* Right: content + children */}
         <div style={{ flex: 1, minWidth: 0 }}>
           <div
-            onClick={() => setCollapsed(c => !c)}
+            ref={headerRef}
+            onClick={toggleCollapsed}
             style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', cursor: 'pointer' }}
           >
             <span style={{ fontSize: '12px', color: '#a1a1aa', fontWeight: '600' }}>{comment.username}</span>
-            <span style={{ fontSize: '11px', color: '#52525b' }}>{timeAgo(comment.created_at)}</span>
+            <span style={{ fontSize: '11px', color: '#8a8a9a' }}>{timeAgo(comment.created_at)}</span>
             {collapsed && children.length > 0 && (
-              <span style={{ fontSize: '11px', color: '#52525b' }}>
+              <span style={{ fontSize: '11px', color: '#8a8a9a' }}>
                 · {children.length} repl{children.length === 1 ? 'y' : 'ies'} hidden
               </span>
             )}
@@ -96,16 +124,16 @@ function Comment({ comment, allComments, postId, depth, onNewComment }) {
               <p style={{ fontSize: '13px', color: '#a1a1aa', whiteSpace: 'pre-wrap', lineHeight: '1.5', marginBottom: '6px' }}>
                 {comment.content}
               </p>
-              {depth < 6 && (
+              {user && (
                 <button
                   onClick={() => setReplying(r => !r)}
                   className="mono"
                   style={{
-                    fontSize: '11px', color: replying ? '#4B9CD3' : '#52525b',
+                    fontSize: '11px', color: replying ? '#4B9CD3' : '#8a8a9a',
                     background: 'none', border: 'none', cursor: 'pointer', padding: 0,
                   }}
                   onMouseEnter={e => { if (!replying) e.currentTarget.style.color = '#a1a1aa' }}
-                  onMouseLeave={e => { if (!replying) e.currentTarget.style.color = replying ? '#4B9CD3' : '#52525b' }}
+                  onMouseLeave={e => { if (!replying) e.currentTarget.style.color = replying ? '#4B9CD3' : '#8a8a9a' }}
                 >
                   {replying ? 'cancel' : 'reply'}
                 </button>
@@ -141,17 +169,32 @@ function Comment({ comment, allComments, postId, depth, onNewComment }) {
             </>
           )}
 
-          {/* Keep children mounted so their collapsed state is preserved */}
           {children.length > 0 && (
-            <div style={{ display: collapsed ? 'none' : 'block' }}>
-              <CommentThread
-                comments={children}
-                allComments={allComments}
-                postId={postId}
-                depth={depth + 1}
-                onNewComment={onNewComment}
-              />
-            </div>
+            depth >= MAX_INDENT ? (
+              !collapsed && (
+                <button
+                  onClick={() => navigate(`/s/${spaceId}/post/${postId}?root=${comment.id}`)}
+                  className="mono"
+                  style={{
+                    marginTop: '6px', padding: '3px 8px', fontSize: '11px',
+                    background: 'transparent', border: '1px solid #2a2a38',
+                    color: '#4B9CD3', cursor: 'pointer',
+                  }}
+                >
+                  show {children.length} repl{children.length === 1 ? 'y' : 'ies'} →
+                </button>
+              )
+            ) : (
+              <div style={{ display: collapsed ? 'none' : 'block' }}>
+                <CommentThread
+                  comments={children}
+                  allComments={allComments}
+                  postId={postId}
+                  depth={depth + 1}
+                  onNewComment={onNewComment}
+                />
+              </div>
+            )
           )}
         </div>
       </div>

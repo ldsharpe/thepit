@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import CreateSpaceModal from './CreateSpaceModal'
+import { useAuth } from '../context/AuthContext'
 
 const NAV = [
   { label: 'Home',           to: '/' },
@@ -11,6 +12,7 @@ const NAV = [
 export default function Sidebar() {
   const [showCreate, setShowCreate] = useState(false)
   const { pathname } = useLocation()
+  const { user } = useAuth()
 
   return (
     <>
@@ -46,7 +48,7 @@ export default function Sidebar() {
                     background: active ? '#1c1c26' : 'transparent',
                     color: active ? '#4B9CD3' : '#a1a1aa',
                   }}
-                  onMouseEnter={e => { if (!active) e.currentTarget.style.background = '#1c1c26' }}
+                  onMouseEnter={e => { if (!active) e.currentTarget.style.background = '#22222e' }}
                   onMouseLeave={e => { if (!active) e.currentTarget.style.background = 'transparent' }}
                 >
                   {active && <span style={{ color: '#4B9CD3', marginRight: '6px' }}>»</span>}
@@ -55,19 +57,32 @@ export default function Sidebar() {
               )
             })}
 
-            <button
-              onClick={() => setShowCreate(true)}
-              style={{
-                display: 'block', width: '100%', padding: '7px 10px',
-                background: 'transparent', border: 'none',
-                color: 'white', fontSize: '13px', cursor: 'pointer',
-                textAlign: 'left', fontFamily: 'inherit',
-              }}
-              onMouseEnter={e => e.currentTarget.style.background = '#1c1c26'}
-              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-            >
-              + Create a Space
-            </button>
+            {user ? (
+              <button
+                onClick={() => setShowCreate(true)}
+                style={{
+                  display: 'block', width: '100%', padding: '7px 10px',
+                  background: 'transparent', border: 'none',
+                  color: 'white', fontSize: '13px', cursor: 'pointer',
+                  textAlign: 'left', fontFamily: 'inherit',
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = '#22222e'}
+                onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+              >
+                + Create a Space
+              </button>
+            ) : (
+              <Link
+                to="/login"
+                className="no-underline"
+                style={{
+                  display: 'block', padding: '7px 10px',
+                  color: '#52525b', fontSize: '13px',
+                }}
+              >
+                + Create a Space
+              </Link>
+            )}
           </div>
         </div>
       </aside>

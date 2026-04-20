@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useSearchParams } from 'react-router-dom'
 import ReactionBar from '../components/ReactionBar'
 import CommentThread from '../components/CommentThread'
+import { useAuth } from '../context/AuthContext'
 
 export default function PostPage() {
   const { spaceId, postId } = useParams()
+  const { user } = useAuth()
+  const [searchParams] = useSearchParams()
+  const rootCommentId = searchParams.get('root') ? parseInt(searchParams.get('root')) : null
   const [post, setPost] = useState(null)
   const [comments, setComments] = useState([])
   const [commentText, setCommentText] = useState('')
@@ -30,6 +34,7 @@ export default function PostPage() {
       const res = await fetch('/api/comments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ post_id: postId, content: commentText.trim() }),
       })
       const newComment = await res.json()
@@ -40,10 +45,12 @@ export default function PostPage() {
     }
   }
 
-  if (loading) return <div style={{ padding: '24px', color: '#52525b', fontSize: '13px' }}>Loading...</div>
+  if (loading) return <div style={{ padding: '24px', color: '#8a8a9a', fontSize: '13px' }}>Loading...</div>
   if (!post || post.error) return <div style={{ padding: '24px', color: '#e05252', fontSize: '13px' }}>Post not found.</div>
 
-  const topLevelComments = comments.filter(c => !c.parent_comment_id)
+  const topLevelComments = rootCommentId
+    ? comments.filter(c => c.id === rootCommentId)
+    : comments.filter(c => !c.parent_comment_id)
 
   return (
     <div>
@@ -67,8 +74,8 @@ export default function PostPage() {
         </div>
 
         <div style={{ flex: 1, padding: '12px 16px' }}>
-          <div style={{ fontSize: '11px', color: '#52525b', marginBottom: '6px' }}>
-            posted by <span style={{ color: '#71717a' }}>{post.username}</span>
+          <div style={{ fontSize: '11px', color: '#8a8a9a', marginBottom: '6px' }}>
+            posted by <span style={{ color: '#9a9aaa' }}>{post.username}</span>
             {' · '}{timeAgo(post.created_at)}
           </div>
           <h1 style={{ fontSize: '18px', fontWeight: '700', color: '#e4e4e7', lineHeight: '1.3', marginBottom: '10px' }}>
@@ -84,35 +91,60 @@ export default function PostPage() {
 
       {/* Comment box */}
       <div style={{ border: '1px solid #2a2a38', background: '#16161e', padding: '12px', marginBottom: '12px' }}>
-        <div className="mono" style={{ fontSize: '11px', color: '#52525b', marginBottom: '8px' }}>
-          commenting as <span style={{ color: '#4B9CD3' }}>demo_user</span>
-        </div>
-        <form onSubmit={submitComment} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <textarea
-            value={commentText}
-            onChange={e => setCommentText(e.target.value)}
-            placeholder="What are your thoughts?"
-            rows={3}
-            style={{
-              padding: '6px 8px', background: '#0e0e12', border: '1px solid #2a2a38',
-              color: '#d4d4d8', fontSize: '13px', outline: 'none', resize: 'vertical',
-              width: '100%', fontFamily: 'inherit',
-            }}
-          />
-          <button
-            type="submit"
-            disabled={submitting}
-            style={{
-              alignSelf: 'flex-end', padding: '5px 12px',
-              background: '#4B9CD3', border: 'none', color: '#0e0e12',
-              fontSize: '12px', fontWeight: '700', cursor: 'pointer',
-              fontFamily: 'IBM Plex Mono, monospace', opacity: submitting ? 0.6 : 1,
-            }}
-          >
-            {submitting ? 'posting...' : 'submit'}
-          </button>
-        </form>
+        {user ? (
+          <>
+            <div className="mono" style={{ fontSize: '11px', color: '#8a8a9a', marginBottom: '8px' }}>
+              commenting as <span style={{ color: '#4B9CD3' }}>{user.username}</span>
+            </div>
+            <form onSubmit={submitComment} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <textarea
+                value={commentText}
+                onChange={e => setCommentText(e.target.value)}
+                placeholder="What are your thoughts?"
+                rows={3}
+                style={{
+                  padding: '6px 8px', background: '#0e0e12', border: '1px solid #2a2a38',
+                  color: '#d4d4d8', fontSize: '13px', outline: 'none', resize: 'vertical',
+                  width: '100%', fontFamily: 'inherit',
+                }}
+              />
+              <button
+                type="submit"
+                disabled={submitting}
+                style={{
+                  alignSelf: 'flex-end', padding: '5px 12px',
+                  background: '#4B9CD3', border: 'none', color: '#0e0e12',
+                  fontSize: '12px', fontWeight: '700', cursor: 'pointer',
+                  fontFamily: 'IBM Plex Mono, monospace', opacity: submitting ? 0.6 : 1,
+                }}
+              >
+                {submitting ? 'posting...' : 'submit'}
+              </button>
+            </form>
+          </>
+        ) : (
+          <div className="mono" style={{ fontSize: '12px', color: '#8a8a9a', textAlign: 'center', padding: '8px 0' }}>
+            <Link to="/login" style={{ color: '#4B9CD3' }}>Log in</Link> to leave a comment
+          </div>
+        )}
       </div>
+
+      {/* Focused thread banner */}
+      {rootCommentId && (
+        <div style={{
+          border: '1px solid #2a2a38', borderBottom: 'none', background: '#1c1c26',
+          padding: '6px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        }}>
+          <span className="mono" style={{ fontSize: '11px', color: '#8a8a9a' }}>viewing a single thread</span>
+          <Link
+            to={`/s/${spaceId}/post/${postId}`}
+            className="mono"
+            style={{ fontSize: '11px', color: '#4B9CD3' }}
+          >
+            ← back to full thread
+          </Link>
+        </div>
+      )}
 
       {/* Comments */}
       <div style={{ border: '1px solid #2a2a38', background: '#16161e' }}>
@@ -125,7 +157,7 @@ export default function PostPage() {
         </div>
         <div style={{ padding: '8px 12px' }}>
           {topLevelComments.length === 0 ? (
-            <div style={{ padding: '16px 0', color: '#52525b', fontSize: '13px' }}>
+            <div style={{ padding: '16px 0', color: '#8a8a9a', fontSize: '13px' }}>
               No comments yet. Be the first!
             </div>
           ) : (

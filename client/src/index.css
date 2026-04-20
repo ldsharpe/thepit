@@ -10,8 +10,8 @@
   --border2:   #3a3a4e;
   --blue:      #4B9CD3;
   --text:      #d4d4d8;
-  --muted:     #71717a;
-  --faint:     #3f3f52;
+  --muted:     #9a9aaa;
+  --faint:     #52525b;
   --danger:    #e05252;
 }
 
@@ -27,9 +27,10 @@ body {
 }
 
 a { color: var(--blue); }
-a:hover { text-decoration: underline; }
+a:hover { text-decoration: none; }
 
 .mono { font-family: 'IBM Plex Mono', 'Courier New', monospace; }
+.comment-indent { margin-left: 12px; }
 .unbounded { font-family: 'Unbounded', sans-serif; }
 
 ::-webkit-scrollbar { width: 6px; }
@@ -46,7 +47,7 @@ a:hover { text-decoration: underline; }
   .mobile-nav { display: flex; }
   .header-username { display: none; }
   .score-col { width: 36px !important; }
-  .comment-indent { margin-left: 8px !important; padding-left: 8px !important; }
+  .comment-indent { margin-left: 6px !important; }
   .space-banner { flex-wrap: wrap; }
   .space-banner-title { font-size: 11px !important; }
 }

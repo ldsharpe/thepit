@@ -35,9 +35,9 @@ export default function Popular() {
       </div>
       <div style={{ border: '1px solid #2a2a38' }}>
         {loading ? (
-          <div style={{ padding: '24px', textAlign: 'center', color: '#52525b', fontSize: '13px' }}>Loading...</div>
+          <div style={{ padding: '24px', textAlign: 'center', color: '#8a8a9a', fontSize: '13px' }}>Loading...</div>
         ) : posts.length === 0 ? (
-          <div style={{ padding: '32px', textAlign: 'center', color: '#52525b', fontSize: '13px' }}>No posts yet.</div>
+          <div style={{ padding: '32px', textAlign: 'center', color: '#8a8a9a', fontSize: '13px' }}>No posts yet.</div>
         ) : (
           posts.map(post => (
             <PostCard

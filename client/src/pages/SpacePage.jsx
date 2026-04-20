@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import PostCard from '../components/PostCard'
+import { useAuth } from '../context/AuthContext'
 
 export default function SpacePage() {
   const { spaceId } = useParams()
+  const navigate = useNavigate()
+  const { user } = useAuth()
   const [space, setSpace] = useState(null)
   const [posts, setPosts] = useState([])
   const [sort, setSort] = useState('new')
@@ -28,20 +31,16 @@ export default function SpacePage() {
   }, [spaceId, sort])
 
   async function toggleJoin() {
+    if (!user) { navigate('/login'); return }
     setJoining(true)
     setJoinError('')
     try {
       const action = space.is_member ? 'leave' : 'join'
-      const url = `/api/spaces/${spaceId}/${action}`
-      console.log('Fetching:', url)
-      const res = await fetch(url, { method: 'POST' })
-      console.log('Response status:', res.status)
+      const res = await fetch(`/api/spaces/${spaceId}/${action}`, { method: 'POST', credentials: 'include' })
       if (!res.ok) throw new Error(`Server error ${res.status}`)
       const data = await res.json()
-      console.log('Response data:', data)
       setSpace(s => ({ ...s, is_member: data.is_member, member_count: data.member_count }))
     } catch (err) {
-      console.error('Join/leave failed:', err)
       setJoinError(err.message)
     } finally {
       setJoining(false)
@@ -56,6 +55,7 @@ export default function SpacePage() {
       const res = await fetch('/api/posts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ space_id: spaceId, title: title.trim(), content: content.trim() }),
       })
       const newPost = await res.json()
@@ -68,7 +68,7 @@ export default function SpacePage() {
     }
   }
 
-  if (loading) return <div style={{ padding: '24px', color: '#52525b', fontSize: '13px' }}>Loading...</div>
+  if (loading) return <div style={{ padding: '24px', color: '#8a8a9a', fontSize: '13px' }}>Loading...</div>
   if (!space || space.error) return <div style={{ padding: '24px', color: '#e05252', fontSize: '13px' }}>Space not found.</div>
 
   return (
@@ -96,15 +96,15 @@ export default function SpacePage() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
             <div className="space-banner-title" style={{ fontWeight: '700', fontSize: '13px', color: '#e4e4e7', fontFamily: 'Unbounded, sans-serif' }}>{space.name}</div>
             {space.category && space.category !== 'General' && (
-              <span className="mono" style={{ fontSize: '9px', color: '#52525b', border: '1px solid #2a2a38', padding: '1px 5px' }}>
+              <span className="mono" style={{ fontSize: '9px', color: '#8a8a9a', border: '1px solid #2a2a38', padding: '1px 5px' }}>
                 {space.category.toUpperCase()}
               </span>
             )}
           </div>
           {space.description && (
-            <div style={{ fontSize: '12px', color: '#71717a' }}>{space.description}</div>
+            <div style={{ fontSize: '12px', color: '#9a9aaa' }}>{space.description}</div>
           )}
-          <div className="mono" style={{ fontSize: '11px', color: '#52525b', marginTop: '2px' }}>
+          <div className="mono" style={{ fontSize: '11px', color: '#8a8a9a', marginTop: '2px' }}>
             {space.member_count ?? 0} member{space.member_count !== 1 ? 's' : ''}
           </div>
         </div>
@@ -128,18 +128,31 @@ export default function SpacePage() {
               {joinError}
             </span>
           )}
-          <button
-            onClick={() => setShowCreate(s => !s)}
-            style={{
-              padding: '5px 12px', fontSize: '12px', fontWeight: '700',
-              background: '#4B9CD3', color: '#0e0e12', border: 'none', cursor: 'pointer',
-              fontFamily: 'IBM Plex Mono, monospace',
-            }}
-            onMouseEnter={e => e.currentTarget.style.background = '#3a8bc2'}
-            onMouseLeave={e => e.currentTarget.style.background = '#4B9CD3'}
-          >
-            + new post
-          </button>
+          {user ? (
+            <button
+              onClick={() => setShowCreate(s => !s)}
+              style={{
+                padding: '5px 12px', fontSize: '12px', fontWeight: '700',
+                background: '#4B9CD3', color: '#0e0e12', border: 'none', cursor: 'pointer',
+                fontFamily: 'IBM Plex Mono, monospace',
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = '#3a8bc2'}
+              onMouseLeave={e => e.currentTarget.style.background = '#4B9CD3'}
+            >
+              + new post
+            </button>
+          ) : (
+            <button
+              onClick={() => navigate('/login')}
+              style={{
+                padding: '5px 12px', fontSize: '12px', fontWeight: '700',
+                background: 'transparent', color: '#8a8a9a', border: '1px solid #2a2a38', cursor: 'pointer',
+                fontFamily: 'IBM Plex Mono, monospace',
+              }}
+            >
+              log in to post
+            </button>
+          )}
         </div>
       </div>
 
@@ -147,7 +160,7 @@ export default function SpacePage() {
       {space.rules && (
         <div style={{ border: '1px solid #2a2a38', borderTop: 'none', background: '#16161e', padding: '10px 14px' }}>
           <div className="mono" style={{ fontSize: '10px', color: '#4B9CD3', letterSpacing: '1px', marginBottom: '6px' }}>RULES</div>
-          <div style={{ fontSize: '12px', color: '#71717a', whiteSpace: 'pre-wrap', lineHeight: '1.6' }}>{space.rules}</div>
+          <div style={{ fontSize: '12px', color: '#9a9aaa', whiteSpace: 'pre-wrap', lineHeight: '1.6' }}>{space.rules}</div>
         </div>
       )}
 
@@ -180,7 +193,7 @@ export default function SpacePage() {
               <button
                 type="button"
                 onClick={() => setShowCreate(false)}
-                style={{ padding: '5px 10px', background: 'none', border: '1px solid #2a2a38', color: '#71717a', cursor: 'pointer', fontSize: '12px', fontFamily: 'inherit' }}
+                style={{ padding: '5px 10px', background: 'none', border: '1px solid #2a2a38', color: '#9a9aaa', cursor: 'pointer', fontSize: '12px', fontFamily: 'inherit' }}
               >
                 cancel
               </button>
@@ -219,7 +232,7 @@ export default function SpacePage() {
               style={{
                 padding: '2px 8px', fontSize: '11px', cursor: 'pointer',
                 background: sort === s ? '#4B9CD3' : 'transparent',
-                color: sort === s ? '#0e0e12' : '#71717a',
+                color: sort === s ? '#0e0e12' : '#9a9aaa',
                 border: sort === s ? '1px solid #4B9CD3' : '1px solid #2a2a38',
                 fontWeight: sort === s ? '700' : '400',
               }}
@@ -233,7 +246,7 @@ export default function SpacePage() {
       {/* Posts */}
       <div style={{ border: '1px solid #2a2a38', borderTop: 'none' }}>
         {posts.length === 0 ? (
-          <div style={{ padding: '32px', textAlign: 'center', color: '#52525b', fontSize: '13px' }}>
+          <div style={{ padding: '32px', textAlign: 'center', color: '#8a8a9a', fontSize: '13px' }}>
             No posts yet. Be the first to post!
           </div>
         ) : (
