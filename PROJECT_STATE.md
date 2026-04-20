@@ -24,14 +24,14 @@ cd client && npm run dev
 
 ## What's Been Built
 
-- Spaces (create, list, browse, join/leave with member counts)
+- Spaces (create with name/description/color/category/rules/icon, list, browse, join/leave with member counts)
 - Posts (create, feed, sort by new/top, clickable rows)
-- Comments (threaded/nested, collapsible, sorted by net score at every level)
+- Comments (threaded/nested, collapsible, sorted by net score at every level; collapse via thread line or username row click; child collapse state preserved when parent toggled)
 - Reactions (like/dislike on posts and comments, mutually exclusive, toggle-off)
 - Dark theme with Carolina Blue (#4B9CD3) accents
 - Reddit-style home feed (posts from all spaces, sort new/top)
 - Popular page (top posts across all spaces)
-- Explore Spaces page (grid of space cards, sort by new/popular)
+- Explore Spaces page (grid of space cards, sort by new/popular, filter by category, join button on cards)
 - Left sidebar: Home, Popular, Explore Spaces, Create a Space
 - Mobile bottom nav bar (Home, Popular, Explore, New Space)
 - Search bar in header (filters spaces live)
@@ -56,7 +56,7 @@ cd client && npm run dev
 
 ## Current Goals / Next Up
 
-- Space customization expansion just completed. Waiting on user direction.
+- Nothing actively in progress. Waiting on user direction.
 - Auth is the likely next big feature (users sharing demo_user is limiting).
 
 ### Planned / Possible Next Steps
