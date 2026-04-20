@@ -15,6 +15,7 @@ export default function PostCard({ post, spaceId, spaceName, spaceColor, onReact
       {/* Score column — clicks here shouldn't navigate */}
       <div
         onClick={e => e.stopPropagation()}
+        className="score-col"
         style={{
           width: '48px', flexShrink: 0,
           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',

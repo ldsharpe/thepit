@@ -51,7 +51,7 @@ export default function SpacePage() {
   return (
     <div>
       {/* Space banner */}
-      <div style={{
+      <div className="space-banner" style={{
         background: '#16161e',
         borderTop: `3px solid ${space.banner_color || '#4B9CD3'}`,
         border: '1px solid #2a2a38',
@@ -70,7 +70,7 @@ export default function SpacePage() {
           {space.name[0].toUpperCase()}
         </div>
         <div>
-          <div style={{ fontWeight: '700', fontSize: '13px', color: '#e4e4e7', fontFamily: 'Unbounded, sans-serif' }}>{space.name}</div>
+          <div className="space-banner-title" style={{ fontWeight: '700', fontSize: '13px', color: '#e4e4e7', fontFamily: 'Unbounded, sans-serif' }}>{space.name}</div>
           {space.description && (
             <div style={{ fontSize: '12px', color: '#71717a' }}>{space.description}</div>
           )}

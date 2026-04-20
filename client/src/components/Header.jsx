@@ -25,26 +25,17 @@ export default function Header({ inSpace }) {
   return (
     <header style={{ background: '#11111a', borderBottom: '2px solid #2a2a38' }}>
       <div
-        className="max-w-5xl mx-auto px-4"
-        style={{ display: 'flex', alignItems: 'center', gap: '16px', height: '44px' }}
+        className="max-w-5xl mx-auto px-3"
+        style={{ display: 'flex', alignItems: 'center', gap: '10px', height: '44px' }}
       >
-        {/* Logo */}
-        <Link to="/" className="no-underline" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span
-            className="unbounded"
-            style={{
-              fontSize: '15px',
-              fontWeight: '900',
-              color: '#4B9CD3',
-              letterSpacing: '0.5px',
-            }}
-          >
+        <Link to="/" className="no-underline" style={{ flexShrink: 0 }}>
+          <span className="unbounded" style={{ fontSize: '13px', fontWeight: '900', color: '#4B9CD3', letterSpacing: '0.5px' }}>
             THE PIT
           </span>
         </Link>
 
-        {/* Search */}
-        <div style={{ position: 'relative', flex: 1, maxWidth: '360px' }}>
+        {/* Search — takes all remaining space */}
+        <div style={{ position: 'relative', flex: 1 }}>
           <input
             value={query}
             onChange={handleSearch}
@@ -53,13 +44,9 @@ export default function Header({ inSpace }) {
             placeholder="search spaces..."
             className="mono"
             style={{
-              width: '100%',
-              padding: '4px 8px',
-              background: '#0e0e12',
-              border: '1px solid #2a2a38',
-              color: '#d4d4d8',
-              fontSize: '12px',
-              outline: 'none',
+              width: '100%', padding: '4px 8px',
+              background: '#0e0e12', border: '1px solid #2a2a38',
+              color: '#d4d4d8', fontSize: '12px', outline: 'none',
             }}
           />
           {focused && results.length > 0 && (
@@ -88,20 +75,17 @@ export default function Header({ inSpace }) {
           )}
         </div>
 
-        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
           {inSpace && (
             <Link
               to="/"
               className="mono no-underline"
-              style={{
-                fontSize: '11px', padding: '3px 8px',
-                border: '1px solid #2a2a38', color: '#71717a',
-              }}
+              style={{ fontSize: '11px', padding: '3px 8px', border: '1px solid #2a2a38', color: '#71717a' }}
             >
               &laquo; home
             </Link>
           )}
-          <span className="mono" style={{ fontSize: '11px', color: '#3f3f52' }}>
+          <span className="mono header-username" style={{ fontSize: '11px', color: '#3f3f52' }}>
             logged in as <span style={{ color: '#4B9CD3' }}>demo_user</span>
           </span>
         </div>

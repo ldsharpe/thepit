@@ -7,7 +7,7 @@ function sortByScore(arr) { return [...arr].sort((a, b) => netScore(b) - netScor
 export default function CommentThread({ comments, allComments, postId, depth = 0, onNewComment }) {
   const all = allComments ?? comments
   return (
-    <div style={depth > 0 ? { marginLeft: '16px', borderLeft: '2px solid #2a2a38', paddingLeft: '12px' } : {}}>
+    <div className={depth > 0 ? 'comment-indent' : ''} style={depth > 0 ? { marginLeft: '16px', borderLeft: '2px solid #2a2a38', paddingLeft: '12px' } : {}}>
       {sortByScore(comments).map(c => (
         <Comment key={c.id} comment={c} allComments={all} postId={postId} depth={depth} onNewComment={onNewComment} />
       ))}
