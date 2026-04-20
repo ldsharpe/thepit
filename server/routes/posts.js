@@ -13,7 +13,8 @@ router.get('/space/:spaceId', (req, res) => {
       COALESCE((SELECT SUM(CASE WHEN value = 1 THEN 1 ELSE 0 END) FROM reactions WHERE target_type = 'post' AND target_id = p.id), 0) as likes,
       COALESCE((SELECT SUM(CASE WHEN value = -1 THEN 1 ELSE 0 END) FROM reactions WHERE target_type = 'post' AND target_id = p.id), 0) as dislikes,
       COALESCE((SELECT SUM(value) FROM reactions WHERE target_type = 'post' AND target_id = p.id), 0) as net_score,
-      (SELECT COUNT(*) FROM comments WHERE post_id = p.id) as comment_count
+      (SELECT COUNT(*) FROM comments WHERE post_id = p.id) as comment_count,
+      (SELECT value FROM reactions WHERE target_type = 'post' AND target_id = p.id AND user_id = 1) as userReaction
     FROM posts p
     LEFT JOIN users u ON p.user_id = u.id
     WHERE p.space_id = ?
@@ -26,7 +27,8 @@ router.get('/:id', (req, res) => {
   const post = db.prepare(`
     SELECT p.*, u.username,
       COALESCE((SELECT SUM(CASE WHEN value = 1 THEN 1 ELSE 0 END) FROM reactions WHERE target_type = 'post' AND target_id = p.id), 0) as likes,
-      COALESCE((SELECT SUM(CASE WHEN value = -1 THEN 1 ELSE 0 END) FROM reactions WHERE target_type = 'post' AND target_id = p.id), 0) as dislikes
+      COALESCE((SELECT SUM(CASE WHEN value = -1 THEN 1 ELSE 0 END) FROM reactions WHERE target_type = 'post' AND target_id = p.id), 0) as dislikes,
+      (SELECT value FROM reactions WHERE target_type = 'post' AND target_id = p.id AND user_id = 1) as userReaction
     FROM posts p
     LEFT JOIN users u ON p.user_id = u.id
     WHERE p.id = ?
@@ -36,7 +38,8 @@ router.get('/:id', (req, res) => {
   const comments = db.prepare(`
     SELECT c.*, u.username,
       COALESCE((SELECT SUM(CASE WHEN value = 1 THEN 1 ELSE 0 END) FROM reactions WHERE target_type = 'comment' AND target_id = c.id), 0) as likes,
-      COALESCE((SELECT SUM(CASE WHEN value = -1 THEN 1 ELSE 0 END) FROM reactions WHERE target_type = 'comment' AND target_id = c.id), 0) as dislikes
+      COALESCE((SELECT SUM(CASE WHEN value = -1 THEN 1 ELSE 0 END) FROM reactions WHERE target_type = 'comment' AND target_id = c.id), 0) as dislikes,
+      (SELECT value FROM reactions WHERE target_type = 'comment' AND target_id = c.id AND user_id = 1) as userReaction
     FROM comments c
     LEFT JOIN users u ON c.user_id = u.id
     WHERE c.post_id = ?
