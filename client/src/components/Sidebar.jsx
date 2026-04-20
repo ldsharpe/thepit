@@ -1,0 +1,82 @@
+import { useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
+import CreateSpaceModal from './CreateSpaceModal'
+
+const NAV = [
+  { label: 'Home',           to: '/' },
+  { label: 'Popular',        to: '/popular' },
+  { label: 'Explore Spaces', to: '/explore', disabled: true },
+]
+
+export default function Sidebar() {
+  const [showCreate, setShowCreate] = useState(false)
+  const { pathname } = useLocation()
+
+  return (
+    <>
+      <aside style={{ width: '180px', flexShrink: 0 }}>
+        <div style={{ position: 'sticky', top: '16px' }}>
+          {/* Nav panel */}
+          <div style={{ border: '1px solid #2a2a38', background: '#16161e' }}>
+            <div className="unbounded" style={{
+              padding: '6px 10px',
+              fontSize: '8px',
+              fontWeight: '700',
+              letterSpacing: '1px',
+              color: '#a1a1aa',
+              borderBottom: '1px solid #2a2a38',
+              textTransform: 'uppercase',
+              background: '#1c1c26',
+            }}>
+              Navigate
+            </div>
+            {NAV.map(({ label, to, disabled }) => {
+              const active = pathname === to
+              return (
+                <Link
+                  key={label}
+                  to={disabled ? '#' : to}
+                  onClick={disabled ? e => e.preventDefault() : undefined}
+                  className="no-underline"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '7px 10px',
+                    fontSize: '13px',
+                    borderBottom: '1px solid #2a2a38',
+                    background: active ? '#1c1c26' : 'transparent',
+                    color: disabled ? '#3f3f52' : active ? '#4B9CD3' : '#a1a1aa',
+                    cursor: disabled ? 'default' : 'pointer',
+                  }}
+                  onMouseEnter={e => { if (!active && !disabled) e.currentTarget.style.background = '#1c1c26' }}
+                  onMouseLeave={e => { if (!active && !disabled) e.currentTarget.style.background = 'transparent' }}
+                >
+                  {active && <span style={{ color: '#4B9CD3', marginRight: '6px' }}>»</span>}
+                  {label}
+                  {disabled && <span className="mono" style={{ fontSize: '9px', color: '#3f3f52' }}>soon</span>}
+                </Link>
+              )
+            })}
+
+            <button
+              onClick={() => setShowCreate(true)}
+              style={{
+                display: 'block', width: '100%', padding: '7px 10px',
+                background: 'transparent', border: 'none',
+                color: '#4B9CD3', fontSize: '13px', cursor: 'pointer',
+                textAlign: 'left', fontFamily: 'inherit',
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = '#1c1c26'}
+              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+            >
+              + Create a Space
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      {showCreate && <CreateSpaceModal onClose={() => setShowCreate(false)} />}
+    </>
+  )
+}
