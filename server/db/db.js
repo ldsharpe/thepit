@@ -17,6 +17,7 @@ for (const col of [
   "ALTER TABLE spaces ADD COLUMN category TEXT DEFAULT 'General'",
   "ALTER TABLE spaces ADD COLUMN rules TEXT",
   "ALTER TABLE spaces ADD COLUMN icon TEXT",
+  "ALTER TABLE users ADD COLUMN password_hash TEXT",
 ]) {
   try { db.exec(col); } catch {}
 }

@@ -1,14 +1,15 @@
 const express = require('express');
 const db = require('../db/db');
+const { requireAuth } = require('./auth');
 const router = express.Router();
 
-router.post('/', (req, res) => {
+router.post('/', requireAuth, (req, res) => {
   const { post_id, content, parent_comment_id } = req.body;
   if (!post_id || !content?.trim()) return res.status(400).json({ error: 'post_id and content are required' });
 
   const result = db.prepare(
-    'INSERT INTO comments (post_id, user_id, parent_comment_id, content) VALUES (?, 1, ?, ?)'
-  ).run(post_id, parent_comment_id || null, content.trim());
+    'INSERT INTO comments (post_id, user_id, parent_comment_id, content) VALUES (?, ?, ?, ?)'
+  ).run(post_id, req.session.userId, parent_comment_id || null, content.trim());
 
   const comment = db.prepare(`
     SELECT c.*, u.username FROM comments c
