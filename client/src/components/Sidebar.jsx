@@ -60,7 +60,7 @@ export default function Sidebar() {
               style={{
                 display: 'block', width: '100%', padding: '7px 10px',
                 background: 'transparent', border: 'none',
-                color: '#4B9CD3', fontSize: '13px', cursor: 'pointer',
+                color: 'white', fontSize: '13px', cursor: 'pointer',
                 textAlign: 'left', fontFamily: 'inherit',
               }}
               onMouseEnter={e => e.currentTarget.style.background = '#1c1c26'}

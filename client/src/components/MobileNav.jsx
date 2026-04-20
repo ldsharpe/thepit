@@ -2,6 +2,12 @@ import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import CreateSpaceModal from './CreateSpaceModal'
 
+const NAV = [
+  { to: '/',        label: 'Home',    icon: '⌂' },
+  { to: '/popular', label: 'Popular', icon: '↑' },
+  { to: '/explore', label: 'Explore', icon: '◈' },
+]
+
 export default function MobileNav() {
   const { pathname } = useLocation()
   const [showCreate, setShowCreate] = useState(false)
@@ -17,23 +23,17 @@ export default function MobileNav() {
           height: '52px', padding: '0 8px',
         }}
       >
-        <Link
-          to="/"
-          className="no-underline"
-          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: 1 }}
-        >
-          <span style={{ fontSize: '18px', lineHeight: 1, color: pathname === '/' ? '#4B9CD3' : '#52525b' }}>⌂</span>
-          <span className="mono" style={{ fontSize: '9px', color: pathname === '/' ? '#4B9CD3' : '#52525b' }}>Home</span>
-        </Link>
-
-        <Link
-          to="/popular"
-          className="no-underline"
-          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: 1 }}
-        >
-          <span style={{ fontSize: '18px', lineHeight: 1, color: pathname === '/popular' ? '#4B9CD3' : '#52525b' }}>↑</span>
-          <span className="mono" style={{ fontSize: '9px', color: pathname === '/popular' ? '#4B9CD3' : '#52525b' }}>Popular</span>
-        </Link>
+        {NAV.map(({ to, label, icon }) => (
+          <Link
+            key={to}
+            to={to}
+            className="no-underline"
+            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: 1 }}
+          >
+            <span style={{ fontSize: '18px', lineHeight: 1, color: pathname === to ? '#4B9CD3' : '#52525b' }}>{icon}</span>
+            <span className="mono" style={{ fontSize: '9px', color: pathname === to ? '#4B9CD3' : '#52525b' }}>{label}</span>
+          </Link>
+        ))}
 
         <button
           onClick={() => setShowCreate(true)}
@@ -42,8 +42,8 @@ export default function MobileNav() {
             background: 'none', border: 'none', cursor: 'pointer',
           }}
         >
-          <span style={{ fontSize: '20px', lineHeight: 1, color: '#4B9CD3' }}>+</span>
-          <span className="mono" style={{ fontSize: '9px', color: '#4B9CD3' }}>New Space</span>
+          <span style={{ fontSize: '20px', lineHeight: 1, color: 'white' }}>+</span>
+          <span className="mono" style={{ fontSize: '9px', color: 'white' }}>New Space</span>
         </button>
       </nav>
 
