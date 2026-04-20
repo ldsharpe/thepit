@@ -90,10 +90,17 @@ export default function SpacePage() {
           fontWeight: '900', fontSize: '14px', color: '#0e0e12',
           fontFamily: 'Unbounded, sans-serif',
         }}>
-          {space.name[0].toUpperCase()}
+          {(space.icon?.trim()) || space.name[0].toUpperCase()}
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div className="space-banner-title" style={{ fontWeight: '700', fontSize: '13px', color: '#e4e4e7', fontFamily: 'Unbounded, sans-serif' }}>{space.name}</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+            <div className="space-banner-title" style={{ fontWeight: '700', fontSize: '13px', color: '#e4e4e7', fontFamily: 'Unbounded, sans-serif' }}>{space.name}</div>
+            {space.category && space.category !== 'General' && (
+              <span className="mono" style={{ fontSize: '9px', color: '#52525b', border: '1px solid #2a2a38', padding: '1px 5px' }}>
+                {space.category.toUpperCase()}
+              </span>
+            )}
+          </div>
           {space.description && (
             <div style={{ fontSize: '12px', color: '#71717a' }}>{space.description}</div>
           )}
@@ -135,6 +142,14 @@ export default function SpacePage() {
           </button>
         </div>
       </div>
+
+      {/* Rules section */}
+      {space.rules && (
+        <div style={{ border: '1px solid #2a2a38', borderTop: 'none', background: '#16161e', padding: '10px 14px' }}>
+          <div className="mono" style={{ fontSize: '10px', color: '#4B9CD3', letterSpacing: '1px', marginBottom: '6px' }}>RULES</div>
+          <div style={{ fontSize: '12px', color: '#71717a', whiteSpace: 'pre-wrap', lineHeight: '1.6' }}>{space.rules}</div>
+        </div>
+      )}
 
       {/* Create post form */}
       {showCreate && (

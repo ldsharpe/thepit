@@ -33,7 +33,7 @@ cd client && npm run dev
 - Popular page (top posts across all spaces)
 - Explore Spaces page (grid of space cards, sort by new/popular)
 - Left sidebar: Home, Popular, Explore Spaces, Create a Space
-- Mobile bottom nav bar (Home, Popular, New Space)
+- Mobile bottom nav bar (Home, Popular, Explore, New Space)
 - Search bar in header (filters spaces live)
 - "Home" back button in header when inside a space
 - Mobile responsive layout (sidebar hidden, bottom nav shown)
@@ -56,7 +56,7 @@ cd client && npm run dev
 
 ## Current Goals / Next Up
 
-- Nothing actively in progress. Waiting on user direction.
+- Space customization expansion just completed. Waiting on user direction.
 - Auth is the likely next big feature (users sharing demo_user is limiting).
 
 ### Planned / Possible Next Steps

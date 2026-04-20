@@ -12,4 +12,13 @@ db.pragma('foreign_keys = ON');
 const schema = fs.readFileSync(SCHEMA_PATH, 'utf8');
 db.exec(schema);
 
+// Migrations for existing databases
+for (const col of [
+  "ALTER TABLE spaces ADD COLUMN category TEXT DEFAULT 'General'",
+  "ALTER TABLE spaces ADD COLUMN rules TEXT",
+  "ALTER TABLE spaces ADD COLUMN icon TEXT",
+]) {
+  try { db.exec(col); } catch {}
+}
+
 module.exports = db;

@@ -16,13 +16,20 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  const { name, description, banner_color } = req.body;
+  const { name, description, banner_color, category, rules, icon } = req.body;
   if (!name?.trim()) return res.status(400).json({ error: 'Name is required' });
 
   try {
     const result = db.prepare(
-      'INSERT INTO spaces (name, description, banner_color, created_by) VALUES (?, ?, ?, 1)'
-    ).run(name.trim(), description?.trim() || null, banner_color || '#4B9CD3');
+      'INSERT INTO spaces (name, description, banner_color, category, rules, icon, created_by) VALUES (?, ?, ?, ?, ?, ?, 1)'
+    ).run(
+      name.trim(),
+      description?.trim() || null,
+      banner_color || '#4B9CD3',
+      category || 'General',
+      rules?.trim() || null,
+      icon?.trim() || null,
+    );
     const space = db.prepare('SELECT * FROM spaces WHERE id = ?').get(result.lastInsertRowid);
     res.status(201).json(space);
   } catch (err) {

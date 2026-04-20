@@ -1,13 +1,19 @@
 import { useState } from 'react'
 
-const COLORS = ['#4B9CD3', '#e85d4a', '#4caf7d', '#f5a623', '#9b59b6', '#e91e8c']
+const COLORS = ['#4B9CD3', '#e85d4a', '#4caf7d', '#f5a623', '#9b59b6', '#e91e8c', '#00bcd4', '#ff9800']
+const CATEGORIES = ['General', 'Gaming', 'Science', 'Tech', 'Sports', 'Entertainment', 'News', 'Creative', 'Other']
 
 export default function CreateSpaceModal({ onClose }) {
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
+  const [rules, setRules] = useState('')
   const [color, setColor] = useState('#4B9CD3')
+  const [category, setCategory] = useState('General')
+  const [icon, setIcon] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+
+  const displayIcon = icon.trim() || (name.trim() ? name.trim()[0].toUpperCase() : '?')
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -18,7 +24,14 @@ export default function CreateSpaceModal({ onClose }) {
       const res = await fetch('/api/spaces', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: name.trim(), description, banner_color: color }),
+        body: JSON.stringify({
+          name: name.trim(),
+          description,
+          banner_color: color,
+          category,
+          rules,
+          icon: icon.trim() || null,
+        }),
       })
       if (!res.ok) {
         const data = await res.json()
@@ -38,10 +51,11 @@ export default function CreateSpaceModal({ onClose }) {
         position: 'fixed', inset: 0, zIndex: 50,
         display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px',
         background: 'rgba(0,0,0,0.75)',
+        overflowY: 'auto',
       }}
       onClick={e => e.target === e.currentTarget && onClose()}
     >
-      <div style={{ width: '100%', maxWidth: '400px', background: '#16161e', border: '1px solid #2a2a38' }}>
+      <div style={{ width: '100%', maxWidth: '440px', background: '#16161e', border: '1px solid #2a2a38' }}>
         {/* Title bar */}
         <div style={{
           padding: '8px 12px', background: '#4B9CD3', display: 'flex',
@@ -61,23 +75,76 @@ export default function CreateSpaceModal({ onClose }) {
 
         {/* Form */}
         <form onSubmit={handleSubmit} style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <div>
-            <label className="mono" style={{ display: 'block', fontSize: '11px', color: '#71717a', marginBottom: '4px' }}>
-              NAME *
-            </label>
-            <input
-              value={name}
-              onChange={e => setName(e.target.value)}
-              placeholder="e.g. gaming, news, random"
-              maxLength={50}
-              style={{
-                width: '100%', padding: '6px 8px',
-                background: '#0e0e12', border: '1px solid #2a2a38',
-                color: '#d4d4d8', fontSize: '13px', outline: 'none',
-                fontFamily: 'inherit',
-              }}
-            />
+
+          {/* Preview + Name row */}
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-end' }}>
+            <div style={{
+              width: '48px', height: '48px', flexShrink: 0,
+              background: color,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontFamily: 'Unbounded, sans-serif', fontWeight: '900',
+              fontSize: '18px', color: '#0e0e12',
+            }}>
+              {displayIcon}
+            </div>
+            <div style={{ flex: 1 }}>
+              <label className="mono" style={{ display: 'block', fontSize: '11px', color: '#71717a', marginBottom: '4px' }}>
+                NAME *
+              </label>
+              <input
+                value={name}
+                onChange={e => setName(e.target.value)}
+                placeholder="e.g. gaming, news, random"
+                maxLength={50}
+                style={{
+                  width: '100%', padding: '6px 8px',
+                  background: '#0e0e12', border: '1px solid #2a2a38',
+                  color: '#d4d4d8', fontSize: '13px', outline: 'none',
+                  fontFamily: 'inherit',
+                }}
+              />
+            </div>
           </div>
+
+          {/* Icon + Category row */}
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <div style={{ width: '80px' }}>
+              <label className="mono" style={{ display: 'block', fontSize: '11px', color: '#71717a', marginBottom: '4px' }}>
+                ICON
+              </label>
+              <input
+                value={icon}
+                onChange={e => setIcon(e.target.value.slice(0, 2))}
+                placeholder={name.trim() ? name.trim()[0].toUpperCase() : '?'}
+                maxLength={2}
+                style={{
+                  width: '100%', padding: '6px 8px',
+                  background: '#0e0e12', border: '1px solid #2a2a38',
+                  color: '#d4d4d8', fontSize: '13px', outline: 'none',
+                  fontFamily: 'Unbounded, sans-serif', textAlign: 'center',
+                }}
+              />
+            </div>
+            <div style={{ flex: 1 }}>
+              <label className="mono" style={{ display: 'block', fontSize: '11px', color: '#71717a', marginBottom: '4px' }}>
+                CATEGORY
+              </label>
+              <select
+                value={category}
+                onChange={e => setCategory(e.target.value)}
+                style={{
+                  width: '100%', padding: '6px 8px',
+                  background: '#0e0e12', border: '1px solid #2a2a38',
+                  color: '#d4d4d8', fontSize: '13px', outline: 'none',
+                  fontFamily: 'inherit', cursor: 'pointer',
+                }}
+              >
+                {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </div>
+          </div>
+
+          {/* Description */}
           <div>
             <label className="mono" style={{ display: 'block', fontSize: '11px', color: '#71717a', marginBottom: '4px' }}>
               DESCRIPTION
@@ -86,6 +153,25 @@ export default function CreateSpaceModal({ onClose }) {
               value={description}
               onChange={e => setDescription(e.target.value)}
               placeholder="What is this space about?"
+              rows={2}
+              style={{
+                width: '100%', padding: '6px 8px',
+                background: '#0e0e12', border: '1px solid #2a2a38',
+                color: '#d4d4d8', fontSize: '13px', outline: 'none', resize: 'none',
+                fontFamily: 'inherit',
+              }}
+            />
+          </div>
+
+          {/* Rules */}
+          <div>
+            <label className="mono" style={{ display: 'block', fontSize: '11px', color: '#71717a', marginBottom: '4px' }}>
+              RULES <span style={{ color: '#3f3f52' }}>(optional)</span>
+            </label>
+            <textarea
+              value={rules}
+              onChange={e => setRules(e.target.value)}
+              placeholder="e.g. Be respectful. No spam. Stay on topic."
               rows={3}
               style={{
                 width: '100%', padding: '6px 8px',
@@ -95,11 +181,13 @@ export default function CreateSpaceModal({ onClose }) {
               }}
             />
           </div>
+
+          {/* Color picker */}
           <div>
             <label className="mono" style={{ display: 'block', fontSize: '11px', color: '#71717a', marginBottom: '6px' }}>
               ACCENT COLOR
             </label>
-            <div style={{ display: 'flex', gap: '8px' }}>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
               {COLORS.map(c => (
                 <button
                   key={c}
@@ -107,7 +195,7 @@ export default function CreateSpaceModal({ onClose }) {
                   onClick={() => setColor(c)}
                   style={{
                     width: '22px', height: '22px', background: c,
-                    border: color === c ? `2px solid #fff` : '2px solid transparent',
+                    border: color === c ? '2px solid #fff' : '2px solid transparent',
                     cursor: 'pointer', padding: 0,
                   }}
                 />
@@ -115,7 +203,7 @@ export default function CreateSpaceModal({ onClose }) {
             </div>
           </div>
 
-          {error && <p className="mono" style={{ fontSize: '11px', color: '#e05252' }}>{error}</p>}
+          {error && <p className="mono" style={{ fontSize: '11px', color: '#e05252', margin: 0 }}>{error}</p>}
 
           <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', marginTop: '4px' }}>
             <button

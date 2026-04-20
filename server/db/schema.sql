@@ -9,6 +9,9 @@ CREATE TABLE IF NOT EXISTS spaces (
   name TEXT NOT NULL UNIQUE,
   description TEXT,
   banner_color TEXT DEFAULT '#4B9CD3',
+  category TEXT DEFAULT 'General',
+  rules TEXT,
+  icon TEXT,
   created_by INTEGER REFERENCES users(id),
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
