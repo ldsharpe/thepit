@@ -35,3 +35,22 @@ a:hover { text-decoration: underline; }
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--border2); }
+
+/* ── Responsive ── */
+.layout-sidebar { display: block; }
+.layout-body { padding-bottom: 16px; }
+
+@media (max-width: 640px) {
+  .layout-sidebar { display: none; }
+  .layout-body { padding-bottom: 64px; } /* room for bottom nav */
+  .mobile-nav { display: flex; }
+  .header-username { display: none; }
+  .score-col { width: 36px !important; }
+  .comment-indent { margin-left: 8px !important; padding-left: 8px !important; }
+  .space-banner { flex-wrap: wrap; }
+  .space-banner-title { font-size: 11px !important; }
+}
+
+@media (min-width: 641px) {
+  .mobile-nav { display: none; }
+}
