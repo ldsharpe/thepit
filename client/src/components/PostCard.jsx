@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom'
 import ReactionBar from './ReactionBar'
+import RoleBadge from './RoleBadge'
 
 export default function PostCard({ post, spaceId, spaceName, spaceColor, onReaction }) {
   const navigate = useNavigate()
@@ -39,7 +40,7 @@ export default function PostCard({ post, spaceId, spaceName, spaceColor, onReact
       {/* Content */}
       <div style={{ flex: 1, padding: '8px 12px', minWidth: 0 }}>
         {spaceName && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '3px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '3px', flexWrap: 'wrap' }}>
             <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: spaceColor || '#4B9CD3', flexShrink: 0, display: 'inline-block' }} />
             <Link
               to={`/s/${spaceId}`}
@@ -50,14 +51,16 @@ export default function PostCard({ post, spaceId, spaceName, spaceColor, onReact
               {spaceName}
             </Link>
             <span style={{ color: '#52525b', fontSize: '11px' }}>·</span>
-            <span style={{ fontSize: '11px', color: '#8a8a9a' }}>
-              {post.username} · {timeAgo(post.created_at)}
-            </span>
+            <span style={{ fontSize: '11px', color: '#8a8a9a' }}>{post.username}</span>
+            <RoleBadge role={post.author_role} />
+            <span style={{ fontSize: '11px', color: '#8a8a9a' }}>· {timeAgo(post.created_at)}</span>
           </div>
         )}
         {!spaceName && (
-          <div style={{ fontSize: '11px', color: '#8a8a9a', marginBottom: '3px' }}>
-            {post.username} · {timeAgo(post.created_at)}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '3px', flexWrap: 'wrap' }}>
+            <span style={{ fontSize: '11px', color: '#8a8a9a' }}>{post.username}</span>
+            <RoleBadge role={post.author_role} />
+            <span style={{ fontSize: '11px', color: '#8a8a9a' }}>· {timeAgo(post.created_at)}</span>
           </div>
         )}
 

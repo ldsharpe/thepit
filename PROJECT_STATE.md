@@ -24,21 +24,22 @@ cd client && npm run dev
 
 ## What's Been Built
 
-- Spaces (create with name/description/color/category/rules/icon, list, browse, join/leave with member counts)
+- Spaces (create with name/description/color/category/rules/icon, list, browse, join/leave with member counts, coordinator/helper roles, settings page)
 - Posts (create, feed, sort by new/top, clickable rows)
 - Comments (threaded/nested, collapsible, sorted by net score at every level; collapse via thread line or username row click; child collapse state preserved when parent toggled)
 - Reactions (like/dislike on posts and comments, mutually exclusive, toggle-off)
 - Dark theme with Carolina Blue (#4B9CD3) accents
-- Reddit-style home feed (posts from all spaces, sort new/top)
+- Home feed filtered to followed spaces (logged-out users see login prompt; no-follows shows empty state + Explore button)
 - Popular page (top posts across all spaces)
 - Explore Spaces page (grid of space cards, sort by new/popular, filter by category, join button on cards)
 - Left sidebar: Home, Popular, Explore Spaces, Create a Space
 - Mobile bottom nav bar (Home, Popular, Explore, New Space)
-- Search bar in header (filters spaces live)
+- Search bar in header (spaces fetched once on mount, filtered client-side; dropdown shows colored icon, name, member count)
 - "Home" back button in header when inside a space
 - Mobile responsive layout (sidebar hidden, bottom nav shown)
 - Deployed to Railway with production build config
 - Auth system: username/password, server-side sessions, bcryptjs, rate limiting on login/register
+- Space roles: coordinator (creator, auto-assigned), helper (promoted by coordinator), member. Badges shown in green on posts and comments.
 
 ---
 
@@ -56,13 +57,13 @@ cd client && npm run dev
 
 ## Current Goals / Next Up
 
-- Nothing actively in progress. Waiting on user direction.
-- Auth is the likely next big feature (users sharing demo_user is limiting).
+- Home feed + search bar improvements complete. Waiting on user direction.
 
 ### Planned / Possible Next Steps
 - User profiles
 - Image uploads in posts
 - Search for posts (currently only searches spaces)
+- Coordinator ability to remove/ban members (currently read-only)
 - Persistent session store (low priority)
 
 ---
@@ -77,9 +78,13 @@ cd client && npm run dev
 - **Muted text colors**: `#8a8a9a` (secondary), `#9a9aaa` (tertiary) — bumped for readability
 - Font pairing: **Unbounded** (headers/branding) + **Inter** (body text) + **IBM Plex Mono** (labels, metadata, scores)
 - Post cards: clicking anywhere navigates to post; score column stops propagation
-- Comments: collapsible with ▼/▶ toggle; replies hidden count shown when collapsed
+- Comments: collapse via thread line or header row click; scroll position anchored on collapse; deep chains (depth 5+) show "show replies →" button linking to focused thread view (?root=commentId)
 - Explore Spaces: no hover effect on cards, plain background (#0e0e12)
-- Join/leave routes must come before GET /:id in spaces router (Express 5 route ordering)
+- Join/leave routes defined on app level in index.js (not sub-router) — Express 5 sub-router doesn't reliably match /:id/join
+- Auth requires SESSION_SECRET env var set in Railway dashboard
+- Server packages needed: bcryptjs, express-session, express-rate-limit
+- Space roles stored in space_members.role — coordinator cannot be demoted, only helper/member can be toggled
+- Settings page is coordinator-only; non-coordinators navigated away server-side and client-side
 
 ---
 

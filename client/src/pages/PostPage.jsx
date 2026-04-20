@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, Link, useSearchParams } from 'react-router-dom'
 import ReactionBar from '../components/ReactionBar'
 import CommentThread from '../components/CommentThread'
+import RoleBadge from '../components/RoleBadge'
 import { useAuth } from '../context/AuthContext'
 
 export default function PostPage() {
@@ -74,9 +75,20 @@ export default function PostPage() {
         </div>
 
         <div style={{ flex: 1, padding: '12px 16px' }}>
-          <div style={{ fontSize: '11px', color: '#8a8a9a', marginBottom: '6px' }}>
-            posted by <span style={{ color: '#9a9aaa' }}>{post.username}</span>
-            {' · '}{timeAgo(post.created_at)}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '6px' }}>
+            <span style={{ width: '7px', height: '7px', background: post.space_banner_color || '#4B9CD3', flexShrink: 0, display: 'inline-block' }} />
+            <Link
+              to={`/s/${spaceId}`}
+              className="unbounded no-underline"
+              style={{ fontSize: '10px', color: '#4B9CD3', fontWeight: '700' }}
+            >
+              {post.space_name}
+            </Link>
+            <span style={{ fontSize: '11px', color: '#8a8a9a' }}>·</span>
+            <span style={{ fontSize: '11px', color: '#8a8a9a' }}>posted by</span>
+            <span style={{ fontSize: '11px', color: '#9a9aaa' }}>{post.username}</span>
+            <RoleBadge role={post.author_role} />
+            <span style={{ fontSize: '11px', color: '#8a8a9a' }}>· {timeAgo(post.created_at)}</span>
           </div>
           <h1 style={{ fontSize: '18px', fontWeight: '700', color: '#e4e4e7', lineHeight: '1.3', marginBottom: '10px' }}>
             {post.title}

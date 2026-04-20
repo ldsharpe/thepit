@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import ReactionBar from './ReactionBar'
+import RoleBadge from './RoleBadge'
 import { useAuth } from '../context/AuthContext'
 
 function netScore(c) { return Number(c.likes ?? 0) - Number(c.dislikes ?? 0) }
@@ -111,6 +112,7 @@ function Comment({ comment, allComments, postId, depth, onNewComment }) {
             style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', cursor: 'pointer' }}
           >
             <span style={{ fontSize: '12px', color: '#a1a1aa', fontWeight: '600' }}>{comment.username}</span>
+            <RoleBadge role={comment.author_role} />
             <span style={{ fontSize: '11px', color: '#8a8a9a' }}>{timeAgo(comment.created_at)}</span>
             {collapsed && children.length > 0 && (
               <span style={{ fontSize: '11px', color: '#8a8a9a' }}>

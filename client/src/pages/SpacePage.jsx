@@ -59,7 +59,7 @@ export default function SpacePage() {
         body: JSON.stringify({ space_id: spaceId, title: title.trim(), content: content.trim() }),
       })
       const newPost = await res.json()
-      setPosts(prev => [{ ...newPost, likes: 0, dislikes: 0, comment_count: 0, username: 'demo_user' }, ...prev])
+      setPosts(prev => [{ ...newPost, likes: 0, dislikes: 0, comment_count: 0, username: user.username, author_role: space.user_role }, ...prev])
       setTitle('')
       setContent('')
       setShowCreate(false)
@@ -127,6 +127,21 @@ export default function SpacePage() {
             <span className="mono" style={{ fontSize: '10px', color: '#e05252', alignSelf: 'center' }}>
               {joinError}
             </span>
+          )}
+          {space.user_role === 'coordinator' && (
+            <button
+              onClick={() => navigate(`/s/${spaceId}/settings`)}
+              className="mono"
+              style={{
+                padding: '5px 10px', fontSize: '11px',
+                background: 'transparent', border: '1px solid #2a2a38',
+                color: '#8a8a9a', cursor: 'pointer',
+              }}
+              onMouseEnter={e => e.currentTarget.style.color = '#e4e4e7'}
+              onMouseLeave={e => e.currentTarget.style.color = '#8a8a9a'}
+            >
+              settings
+            </button>
           )}
           {user ? (
             <button

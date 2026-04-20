@@ -7,7 +7,7 @@ export default function Layout() {
   const { spaceId } = useParams()
   const { pathname } = useLocation()
   const inSpace = Boolean(spaceId)
-  const hideSidebar = inSpace || pathname === '/login' || pathname === '/register'
+  const hideSidebar = inSpace || pathname === '/login' || pathname === '/register' || pathname === '/create-space' || pathname.endsWith('/settings')
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: '#0b0b0f' }}>

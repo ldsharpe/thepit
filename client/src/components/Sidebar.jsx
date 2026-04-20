@@ -1,6 +1,4 @@
-import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import CreateSpaceModal from './CreateSpaceModal'
 import { useAuth } from '../context/AuthContext'
 
 const NAV = [
@@ -10,7 +8,6 @@ const NAV = [
 ]
 
 export default function Sidebar() {
-  const [showCreate, setShowCreate] = useState(false)
   const { pathname } = useLocation()
   const { user } = useAuth()
 
@@ -57,37 +54,22 @@ export default function Sidebar() {
               )
             })}
 
-            {user ? (
-              <button
-                onClick={() => setShowCreate(true)}
-                style={{
-                  display: 'block', width: '100%', padding: '7px 10px',
-                  background: 'transparent', border: 'none',
-                  color: 'white', fontSize: '13px', cursor: 'pointer',
-                  textAlign: 'left', fontFamily: 'inherit',
-                }}
-                onMouseEnter={e => e.currentTarget.style.background = '#22222e'}
-                onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-              >
-                + Create a Space
-              </button>
-            ) : (
-              <Link
-                to="/login"
-                className="no-underline"
-                style={{
-                  display: 'block', padding: '7px 10px',
-                  color: '#52525b', fontSize: '13px',
-                }}
-              >
-                + Create a Space
-              </Link>
-            )}
+            <Link
+              to={user ? '/create-space' : '/login'}
+              className="no-underline"
+              style={{
+                display: 'block', padding: '7px 10px',
+                color: user ? 'white' : '#52525b', fontSize: '13px',
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = '#22222e'}
+              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+            >
+              + Create a Space
+            </Link>
           </div>
         </div>
       </aside>
 
-      {showCreate && <CreateSpaceModal onClose={() => setShowCreate(false)} />}
     </>
   )
 }

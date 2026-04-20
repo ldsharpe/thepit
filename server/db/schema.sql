@@ -48,6 +48,7 @@ CREATE TABLE IF NOT EXISTS space_members (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   space_id INTEGER NOT NULL REFERENCES spaces(id) ON DELETE CASCADE,
   user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  role TEXT NOT NULL DEFAULT 'member' CHECK(role IN ('coordinator', 'helper', 'member')),
   joined_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   UNIQUE(space_id, user_id)
 );

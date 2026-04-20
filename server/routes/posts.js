@@ -16,7 +16,8 @@ router.get('/space/:spaceId', (req, res) => {
       COALESCE((SELECT SUM(CASE WHEN value = -1 THEN 1 ELSE 0 END) FROM reactions WHERE target_type = 'post' AND target_id = p.id), 0) as dislikes,
       COALESCE((SELECT SUM(value) FROM reactions WHERE target_type = 'post' AND target_id = p.id), 0) as net_score,
       (SELECT COUNT(*) FROM comments WHERE post_id = p.id) as comment_count,
-      (SELECT value FROM reactions WHERE target_type = 'post' AND target_id = p.id AND user_id = ?) as userReaction
+      (SELECT value FROM reactions WHERE target_type = 'post' AND target_id = p.id AND user_id = ?) as userReaction,
+      (SELECT role FROM space_members WHERE space_id = p.space_id AND user_id = p.user_id) as author_role
     FROM posts p
     LEFT JOIN users u ON p.user_id = u.id
     WHERE p.space_id = ?
@@ -29,12 +30,14 @@ router.get('/:id', (req, res) => {
   const userId = req.session.userId || 0;
 
   const post = db.prepare(`
-    SELECT p.*, u.username,
+    SELECT p.*, u.username, s.name as space_name, s.banner_color as space_banner_color,
       COALESCE((SELECT SUM(CASE WHEN value = 1 THEN 1 ELSE 0 END) FROM reactions WHERE target_type = 'post' AND target_id = p.id), 0) as likes,
       COALESCE((SELECT SUM(CASE WHEN value = -1 THEN 1 ELSE 0 END) FROM reactions WHERE target_type = 'post' AND target_id = p.id), 0) as dislikes,
-      (SELECT value FROM reactions WHERE target_type = 'post' AND target_id = p.id AND user_id = ?) as userReaction
+      (SELECT value FROM reactions WHERE target_type = 'post' AND target_id = p.id AND user_id = ?) as userReaction,
+      (SELECT role FROM space_members WHERE space_id = p.space_id AND user_id = p.user_id) as author_role
     FROM posts p
     LEFT JOIN users u ON p.user_id = u.id
+    LEFT JOIN spaces s ON p.space_id = s.id
     WHERE p.id = ?
   `).get(userId, req.params.id);
   if (!post) return res.status(404).json({ error: 'Post not found' });
@@ -43,12 +46,13 @@ router.get('/:id', (req, res) => {
     SELECT c.*, u.username,
       COALESCE((SELECT SUM(CASE WHEN value = 1 THEN 1 ELSE 0 END) FROM reactions WHERE target_type = 'comment' AND target_id = c.id), 0) as likes,
       COALESCE((SELECT SUM(CASE WHEN value = -1 THEN 1 ELSE 0 END) FROM reactions WHERE target_type = 'comment' AND target_id = c.id), 0) as dislikes,
-      (SELECT value FROM reactions WHERE target_type = 'comment' AND target_id = c.id AND user_id = ?) as userReaction
+      (SELECT value FROM reactions WHERE target_type = 'comment' AND target_id = c.id AND user_id = ?) as userReaction,
+      (SELECT role FROM space_members WHERE space_id = ? AND user_id = c.user_id) as author_role
     FROM comments c
     LEFT JOIN users u ON c.user_id = u.id
     WHERE c.post_id = ?
     ORDER BY c.created_at ASC
-  `).all(userId, req.params.id);
+  `).all(userId, post.space_id, req.params.id);
 
   res.json({ ...post, comments });
 });

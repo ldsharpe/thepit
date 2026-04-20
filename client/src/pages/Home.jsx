@@ -1,19 +1,28 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import PostCard from '../components/PostCard'
+import { useAuth } from '../context/AuthContext'
 
 export default function Home() {
+  const { user } = useAuth()
   const [posts, setPosts] = useState([])
   const [sort, setSort] = useState('new')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    if (user === undefined) return
+    if (user === null) { setLoading(false); return }
+
     setLoading(true)
-    fetch('/api/spaces')
+    fetch('/api/spaces', { credentials: 'include' })
       .then(r => r.json())
       .then(async allSpaces => {
+        const followed = allSpaces.filter(s => s.is_member)
+        if (followed.length === 0) { setPosts(null); setLoading(false); return }
+
         const postArrays = await Promise.all(
-          allSpaces.map(s =>
-            fetch(`/api/posts/space/${s.id}?sort=${sort}`)
+          followed.map(s =>
+            fetch(`/api/posts/space/${s.id}?sort=${sort}`, { credentials: 'include' })
               .then(r => r.json())
               .then(posts => posts.map(p => ({ ...p, spaceName: s.name, spaceColor: s.banner_color })))
           )
@@ -27,7 +36,35 @@ export default function Home() {
         setPosts(all)
         setLoading(false)
       })
-  }, [sort])
+  }, [sort, user])
+
+  if (user === undefined) return null
+
+  if (user === null) {
+    return (
+      <div style={{
+        border: '1px solid #2a2a38', background: '#16161e',
+        padding: '48px 24px', textAlign: 'center',
+      }}>
+        <div className="unbounded" style={{ fontSize: '13px', color: '#d4d4d8', marginBottom: '8px', letterSpacing: '0.5px' }}>
+          YOUR FEED
+        </div>
+        <div className="mono" style={{ fontSize: '12px', color: '#8a8a9a', marginBottom: '20px' }}>
+          Log in to see posts from spaces you follow.
+        </div>
+        <Link
+          to="/login"
+          className="mono no-underline"
+          style={{
+            fontSize: '12px', padding: '6px 16px',
+            background: '#4B9CD3', color: '#0e0e12', fontWeight: '700',
+          }}
+        >
+          log in
+        </Link>
+      </div>
+    )
+  }
 
   return (
     <div>
@@ -66,10 +103,25 @@ export default function Home() {
           <div style={{ padding: '24px', textAlign: 'center', color: '#8a8a9a', fontSize: '13px' }}>
             Loading...
           </div>
+        ) : posts === null ? (
+          <div style={{ padding: '40px 24px', textAlign: 'center' }}>
+            <div className="mono" style={{ fontSize: '13px', color: '#9a9aaa', marginBottom: '16px' }}>
+              You're not following any spaces yet.
+            </div>
+            <Link
+              to="/explore"
+              className="mono no-underline"
+              style={{
+                fontSize: '12px', padding: '5px 14px',
+                border: '1px solid #4B9CD3', color: '#4B9CD3',
+              }}
+            >
+              explore spaces
+            </Link>
+          </div>
         ) : posts.length === 0 ? (
           <div style={{ padding: '32px', textAlign: 'center', color: '#8a8a9a' }}>
-            <div style={{ fontSize: '13px', marginBottom: '6px', color: '#9a9aaa' }}>No posts yet.</div>
-            <div style={{ fontSize: '12px' }}>Create a space and post something to get started.</div>
+            <div style={{ fontSize: '13px', color: '#9a9aaa' }}>No posts yet in your spaces.</div>
           </div>
         ) : (
           posts.map(post => (

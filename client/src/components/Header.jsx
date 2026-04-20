@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
@@ -8,14 +8,21 @@ export default function Header({ inSpace }) {
   const [results, setResults] = useState([])
   const [focused, setFocused] = useState(false)
   const navigate = useNavigate()
+  const allSpaces = useRef([])
 
-  async function handleSearch(e) {
+  useEffect(() => {
+    fetch('/api/spaces')
+      .then(r => r.json())
+      .then(spaces => { allSpaces.current = spaces })
+      .catch(() => {})
+  }, [])
+
+  function handleSearch(e) {
     const val = e.target.value
     setQuery(val)
     if (!val.trim()) { setResults([]); return }
-    const res = await fetch('/api/spaces')
-    const spaces = await res.json()
-    setResults(spaces.filter(s => s.name.toLowerCase().includes(val.toLowerCase())).slice(0, 6))
+    const q = val.toLowerCase()
+    setResults(allSpaces.current.filter(s => s.name.toLowerCase().includes(q)).slice(0, 6))
   }
 
   function selectSpace(space) {
@@ -66,16 +73,29 @@ export default function Header({ inSpace }) {
                   key={s.id}
                   onMouseDown={() => selectSpace(s)}
                   style={{
-                    width: '100%', display: 'flex', alignItems: 'center', gap: '8px',
-                    padding: '6px 10px', background: 'none', border: 'none',
-                    color: '#d4d4d8', fontSize: '13px', cursor: 'pointer', textAlign: 'left',
-                    fontFamily: 'inherit',
+                    width: '100%', display: 'flex', alignItems: 'center', gap: '10px',
+                    padding: '7px 10px', background: 'none', border: 'none',
+                    cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit',
                   }}
                   onMouseEnter={e => e.currentTarget.style.background = '#1c1c26'}
                   onMouseLeave={e => e.currentTarget.style.background = 'none'}
                 >
-                  <span style={{ width: '8px', height: '8px', background: s.banner_color || '#4B9CD3', flexShrink: 0, display: 'inline-block' }} />
-                  {s.name}
+                  <div style={{
+                    width: '28px', height: '28px', flexShrink: 0,
+                    background: s.banner_color || '#4B9CD3',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '14px',
+                  }}>
+                    {s.icon || ''}
+                  </div>
+                  <div style={{ minWidth: 0 }}>
+                    <div className="unbounded" style={{ fontSize: '10px', color: '#d4d4d8', fontWeight: '700', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {s.name}
+                    </div>
+                    <div className="mono" style={{ fontSize: '10px', color: '#8a8a9a', marginTop: '1px' }}>
+                      {s.member_count ?? 0} member{(s.member_count ?? 0) !== 1 ? 's' : ''}
+                    </div>
+                  </div>
                 </button>
               ))}
             </div>

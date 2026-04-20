@@ -18,6 +18,7 @@ for (const col of [
   "ALTER TABLE spaces ADD COLUMN rules TEXT",
   "ALTER TABLE spaces ADD COLUMN icon TEXT",
   "ALTER TABLE users ADD COLUMN password_hash TEXT",
+  "ALTER TABLE space_members ADD COLUMN role TEXT NOT NULL DEFAULT 'member' CHECK(role IN ('coordinator', 'helper', 'member'))",
 ]) {
   try { db.exec(col); } catch {}
 }
