@@ -10,16 +10,13 @@ router.get('/space/:spaceId', (req, res) => {
 
   const posts = db.prepare(`
     SELECT p.*, u.username,
-      COALESCE(SUM(CASE WHEN r.value = 1 THEN 1 ELSE 0 END), 0) as likes,
-      COALESCE(SUM(CASE WHEN r.value = -1 THEN 1 ELSE 0 END), 0) as dislikes,
-      COALESCE(SUM(r.value), 0) as net_score,
-      COUNT(DISTINCT c.id) as comment_count
+      COALESCE((SELECT SUM(CASE WHEN value = 1 THEN 1 ELSE 0 END) FROM reactions WHERE target_type = 'post' AND target_id = p.id), 0) as likes,
+      COALESCE((SELECT SUM(CASE WHEN value = -1 THEN 1 ELSE 0 END) FROM reactions WHERE target_type = 'post' AND target_id = p.id), 0) as dislikes,
+      COALESCE((SELECT SUM(value) FROM reactions WHERE target_type = 'post' AND target_id = p.id), 0) as net_score,
+      (SELECT COUNT(*) FROM comments WHERE post_id = p.id) as comment_count
     FROM posts p
     LEFT JOIN users u ON p.user_id = u.id
-    LEFT JOIN reactions r ON r.target_type = 'post' AND r.target_id = p.id
-    LEFT JOIN comments c ON c.post_id = p.id
     WHERE p.space_id = ?
-    GROUP BY p.id
     ORDER BY ${orderBy}
   `).all(req.params.spaceId);
   res.json(posts);
@@ -28,25 +25,21 @@ router.get('/space/:spaceId', (req, res) => {
 router.get('/:id', (req, res) => {
   const post = db.prepare(`
     SELECT p.*, u.username,
-      COALESCE(SUM(CASE WHEN r.value = 1 THEN 1 ELSE 0 END), 0) as likes,
-      COALESCE(SUM(CASE WHEN r.value = -1 THEN 1 ELSE 0 END), 0) as dislikes
+      COALESCE((SELECT SUM(CASE WHEN value = 1 THEN 1 ELSE 0 END) FROM reactions WHERE target_type = 'post' AND target_id = p.id), 0) as likes,
+      COALESCE((SELECT SUM(CASE WHEN value = -1 THEN 1 ELSE 0 END) FROM reactions WHERE target_type = 'post' AND target_id = p.id), 0) as dislikes
     FROM posts p
     LEFT JOIN users u ON p.user_id = u.id
-    LEFT JOIN reactions r ON r.target_type = 'post' AND r.target_id = p.id
     WHERE p.id = ?
-    GROUP BY p.id
   `).get(req.params.id);
   if (!post) return res.status(404).json({ error: 'Post not found' });
 
   const comments = db.prepare(`
     SELECT c.*, u.username,
-      COALESCE(SUM(CASE WHEN r.value = 1 THEN 1 ELSE 0 END), 0) as likes,
-      COALESCE(SUM(CASE WHEN r.value = -1 THEN 1 ELSE 0 END), 0) as dislikes
+      COALESCE((SELECT SUM(CASE WHEN value = 1 THEN 1 ELSE 0 END) FROM reactions WHERE target_type = 'comment' AND target_id = c.id), 0) as likes,
+      COALESCE((SELECT SUM(CASE WHEN value = -1 THEN 1 ELSE 0 END) FROM reactions WHERE target_type = 'comment' AND target_id = c.id), 0) as dislikes
     FROM comments c
     LEFT JOIN users u ON c.user_id = u.id
-    LEFT JOIN reactions r ON r.target_type = 'comment' AND r.target_id = c.id
     WHERE c.post_id = ?
-    GROUP BY c.id
     ORDER BY c.created_at ASC
   `).all(req.params.id);
 
