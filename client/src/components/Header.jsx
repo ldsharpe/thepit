@@ -11,11 +11,15 @@ export default function Header({ inSpace }) {
   const allSpaces = useRef([])
 
   useEffect(() => {
+    fetchSpaces()
+  }, [])
+
+  function fetchSpaces() {
     fetch('/api/spaces')
       .then(r => r.json())
       .then(spaces => { allSpaces.current = spaces })
       .catch(() => {})
-  }, [])
+  }
 
   function handleSearch(e) {
     const val = e.target.value
@@ -53,7 +57,7 @@ export default function Header({ inSpace }) {
           <input
             value={query}
             onChange={handleSearch}
-            onFocus={() => setFocused(true)}
+            onFocus={() => { setFocused(true); fetchSpaces() }}
             onBlur={() => setTimeout(() => setFocused(false), 150)}
             placeholder="search spaces..."
             className="mono"
@@ -75,7 +79,7 @@ export default function Header({ inSpace }) {
                   style={{
                     width: '100%', display: 'flex', alignItems: 'center', gap: '10px',
                     padding: '7px 10px', background: 'none', border: 'none',
-                    cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit',
+                    cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit', color: '#d4d4d8',
                   }}
                   onMouseEnter={e => e.currentTarget.style.background = '#1c1c26'}
                   onMouseLeave={e => e.currentTarget.style.background = 'none'}
@@ -84,9 +88,10 @@ export default function Header({ inSpace }) {
                     width: '28px', height: '28px', flexShrink: 0,
                     background: s.banner_color || '#4B9CD3',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '14px',
+                    fontFamily: 'Unbounded, sans-serif', fontWeight: '900',
+                    fontSize: '12px', color: '#0e0e12',
                   }}>
-                    {s.icon || ''}
+                    {s.icon?.trim() || s.name[0].toUpperCase()}
                   </div>
                   <div style={{ minWidth: 0 }}>
                     <div className="unbounded" style={{ fontSize: '10px', color: '#d4d4d8', fontWeight: '700', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
