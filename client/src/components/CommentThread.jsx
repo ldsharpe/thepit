@@ -29,6 +29,7 @@ function Comment({ comment, allComments, postId, depth, onNewComment }) {
   const [submitting, setSubmitting] = useState(false)
   const [collapsed, setCollapsed] = useState(false)
   const [lineHover, setLineHover] = useState(false)
+  const [reactions, setReactions] = useState({ likes: comment.likes, dislikes: comment.dislikes, userReaction: comment.userReaction ?? null })
   const headerRef = useRef(null)
 
   function toggleCollapsed() {
@@ -77,12 +78,13 @@ function Comment({ comment, allComments, postId, depth, onNewComment }) {
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, width: '24px' }}>
           {!collapsed && (
             <ReactionBar
-              likes={comment.likes}
-              dislikes={comment.dislikes}
+              likes={reactions.likes}
+              dislikes={reactions.dislikes}
               targetType="comment"
               targetId={comment.id}
-              userReaction={comment.userReaction}
+              userReaction={reactions.userReaction}
               vertical
+              onReaction={data => setReactions(data)}
             />
           )}
           {children.length > 0 && (
