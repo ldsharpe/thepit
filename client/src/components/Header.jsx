@@ -120,9 +120,9 @@ export default function Header({ inSpace }) {
 
           {user ? (
             <>
-              <span className="mono header-username" style={{ fontSize: '11px', color: '#8a8a9a' }}>
+              <Link to={`/u/${user.username}`} className="mono no-underline header-username" style={{ fontSize: '11px', color: '#8a8a9a' }}>
                 logged in as <span style={{ color: '#4B9CD3' }}>{user.username}</span>
-              </span>
+              </Link>
               <button
                 onClick={handleLogout}
                 className="mono"

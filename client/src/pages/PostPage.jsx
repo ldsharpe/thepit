@@ -86,7 +86,7 @@ export default function PostPage() {
             </Link>
             <span style={{ fontSize: '11px', color: '#8a8a9a' }}>·</span>
             <span style={{ fontSize: '11px', color: '#8a8a9a' }}>posted by</span>
-            <span style={{ fontSize: '11px', color: '#9a9aaa' }}>{post.username}</span>
+            <Link to={`/u/${post.username}`} className="no-underline" style={{ fontSize: '11px', color: '#9a9aaa' }}>{post.username}</Link>
             <RoleBadge role={post.author_role} />
             <span style={{ fontSize: '11px', color: '#8a8a9a' }}>· {timeAgo(post.created_at)}</span>
           </div>

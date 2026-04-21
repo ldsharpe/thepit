@@ -9,6 +9,7 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import CreateSpace from './pages/CreateSpace'
 import SpaceSettings from './pages/SpaceSettings'
+import ProfilePage from './pages/ProfilePage'
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
           <Route path="register" element={<Register />} />
           <Route path="create-space" element={<CreateSpace />} />
           <Route path="s/:spaceId/settings" element={<SpaceSettings />} />
+          <Route path="u/:username" element={<ProfilePage />} />
         </Route>
       </Routes>
     </BrowserRouter>

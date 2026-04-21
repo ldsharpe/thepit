@@ -51,14 +51,14 @@ export default function PostCard({ post, spaceId, spaceName, spaceColor, onReact
               {spaceName}
             </Link>
             <span style={{ color: '#52525b', fontSize: '11px' }}>·</span>
-            <span style={{ fontSize: '11px', color: '#8a8a9a' }}>{post.username}</span>
+            <Link to={`/u/${post.username}`} onClick={e => e.stopPropagation()} className="no-underline" style={{ fontSize: '11px', color: '#8a8a9a' }}>{post.username}</Link>
             <RoleBadge role={post.author_role} />
             <span style={{ fontSize: '11px', color: '#8a8a9a' }}>· {timeAgo(post.created_at)}</span>
           </div>
         )}
         {!spaceName && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '3px', flexWrap: 'wrap' }}>
-            <span style={{ fontSize: '11px', color: '#8a8a9a' }}>{post.username}</span>
+            <Link to={`/u/${post.username}`} onClick={e => e.stopPropagation()} className="no-underline" style={{ fontSize: '11px', color: '#8a8a9a' }}>{post.username}</Link>
             <RoleBadge role={post.author_role} />
             <span style={{ fontSize: '11px', color: '#8a8a9a' }}>· {timeAgo(post.created_at)}</span>
           </div>

@@ -37,6 +37,7 @@ app.use('/api/spaces', require('./routes/spaces'));
 app.use('/api/posts', require('./routes/posts'));
 app.use('/api/comments', require('./routes/comments'));
 app.use('/api/reactions', require('./routes/reactions'));
+app.use('/api/users', require('./routes/users'));
 
 const db = require('./db/db');
 const { requireAuth } = require('./routes/auth');

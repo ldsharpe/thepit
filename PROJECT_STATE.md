@@ -57,9 +57,9 @@ cd client && npm run dev
 
 ## Current Goals / Next Up
 
-- Home feed + search bar improvements complete. Waiting on user direction.
+- Project considered complete / shipped.
 
-### Planned / Possible Next Steps
+### Possible Future Enhancements
 - User profiles
 - Image uploads in posts
 - Search for posts (currently only searches spaces)
